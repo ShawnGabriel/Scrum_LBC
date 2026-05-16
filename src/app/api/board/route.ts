@@ -1,0 +1,41 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+
+export async function GET() {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const employees = await prisma.user.findMany({
+      where: { role: "EMPLOYEE" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        assignedIdeas: {
+          include: {
+            tasks: {
+              orderBy: { order: "asc" },
+              include: {
+                revisionTasks: { orderBy: { order: "asc" } },
+                submissions: { orderBy: { createdAt: "desc" } },
+                statusTransitions: { orderBy: { changedAt: "desc" } },
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    return NextResponse.json(employees);
+  } catch (error) {
+    console.error("Failed to fetch board data:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

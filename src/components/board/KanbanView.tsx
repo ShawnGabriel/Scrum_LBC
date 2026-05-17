@@ -176,9 +176,11 @@ export function KanbanView({ ideas, currentUserId, userRole, onTaskClick }: Kanb
 
       <DragOverlay>
         {activeTask ? (
-          <div className="w-[220px] rounded-md border border-[#E6E9EF] bg-white p-3 shadow-lg">
-            <p className="text-sm font-medium text-[#323338]">{activeTask.title}</p>
-            <p className="mt-1 text-xs text-[#676879]">{activeTask.ideaTitle}</p>
+          <div className="w-[220px] rounded-sm border border-primary bg-surface-elevated p-3 shadow-[0_0_20px_rgba(123,184,255,0.15)]">
+            <p className="text-[12px] font-medium text-foreground">{activeTask.title}</p>
+            <p className="mt-1 text-[10px] uppercase tracking-wider text-label">
+              {activeTask.ideaTitle}
+            </p>
           </div>
         ) : null}
       </DragOverlay>

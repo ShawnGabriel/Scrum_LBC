@@ -114,13 +114,13 @@ export default function NewIdeaPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Create New Idea</h1>
+      <h1 className="text-xl font-semibold text-foreground">Create New Idea</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="rounded-lg border border-gray-200 bg-white p-6 space-y-4">
+        <div className="rounded-lg border border-border bg-surface p-6 space-y-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="title" className="text-sm font-medium text-gray-700">
-              Title <span className="text-red-500">*</span>
+            <label htmlFor="title" className="text-sm font-medium text-foreground">
+              Title <span className="text-status-orange">*</span>
             </label>
             <Input
               id="title"
@@ -132,8 +132,8 @@ export default function NewIdeaPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="description" className="text-sm font-medium text-gray-700">
-              Description <span className="text-red-500">*</span>
+            <label htmlFor="description" className="text-sm font-medium text-foreground">
+              Description <span className="text-status-orange">*</span>
             </label>
             <Textarea
               id="description"
@@ -146,17 +146,17 @@ export default function NewIdeaPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="assignee" className="text-sm font-medium text-gray-700">
+            <label htmlFor="assignee" className="text-sm font-medium text-foreground">
               Assign To
             </label>
             {loadingEmployees ? (
-              <p className="text-sm text-gray-400">Loading employees...</p>
+              <p className="text-sm text-label">Loading employees...</p>
             ) : (
               <select
                 id="assignee"
                 value={assignedToId}
                 onChange={(e) => setAssignedToId(e.target.value)}
-                className="h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 <option value="">Unassigned</option>
                 {employees.map((emp) => (
@@ -169,25 +169,25 @@ export default function NewIdeaPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+        <div className="rounded-lg border border-border bg-surface p-6 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
             Tasks
           </h2>
 
           {tasks.map((task, index) => (
             <div
               key={index}
-              className="flex flex-col gap-2 rounded-md border border-gray-200 p-3"
+              className="flex flex-col gap-2 rounded-md border border-border p-3"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500 uppercase">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">
                   Task {index + 1}
                 </span>
                 {tasks.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeTask(index)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-label hover:text-status-orange transition-colors"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

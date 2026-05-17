@@ -11,14 +11,14 @@ interface ViewSwitcherProps {
 
 export function ViewSwitcher({ view, onChange }: ViewSwitcherProps) {
   return (
-    <div className="flex items-center rounded-md border border-[#E6E9EF] bg-white">
+    <div className="flex items-center rounded-sm border border-border bg-surface">
       <button
         onClick={() => onChange("table")}
         className={cn(
-          "flex items-center gap-1.5 rounded-l-md px-3 py-1.5 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider transition-colors",
           view === "table"
-            ? "bg-[#0073EA] text-white"
-            : "text-[#676879] hover:bg-[#F5F6F8]"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
         )}
       >
         <LayoutGrid className="h-3.5 w-3.5" />
@@ -27,10 +27,10 @@ export function ViewSwitcher({ view, onChange }: ViewSwitcherProps) {
       <button
         onClick={() => onChange("kanban")}
         className={cn(
-          "flex items-center gap-1.5 rounded-r-md px-3 py-1.5 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider transition-colors",
           view === "kanban"
-            ? "bg-[#0073EA] text-white"
-            : "text-[#676879] hover:bg-[#F5F6F8]"
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
         )}
       >
         <Kanban className="h-3.5 w-3.5" />

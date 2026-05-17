@@ -42,24 +42,26 @@ export function KanbanCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group rounded-md border border-[#E6E9EF] bg-white p-3 shadow-sm transition-shadow hover:shadow-md ${
-        isDragging ? "opacity-50 shadow-lg" : ""
+      className={`group rounded-sm border border-border bg-surface-elevated p-3 transition-colors hover:border-border-strong hover:bg-surface-hover ${
+        isDragging ? "opacity-50" : ""
       }`}
     >
       <div className="flex items-start gap-2">
         <button
           {...attributes}
           {...listeners}
-          className="mt-0.5 cursor-grab text-[#C5C7D0] opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+          className="mt-0.5 cursor-grab text-label opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
         >
           <GripVertical className="h-4 w-4" />
         </button>
 
         <div className="min-w-0 flex-1 cursor-pointer" onClick={onClick}>
-          <p className="text-sm font-medium text-[#323338] leading-tight">
+          <p className="text-[12px] font-medium leading-tight text-foreground">
             {title}
           </p>
-          <p className="mt-1 truncate text-xs text-[#676879]">{ideaTitle}</p>
+          <p className="mt-1 truncate text-[10px] uppercase tracking-wider text-label">
+            {ideaTitle}
+          </p>
 
           <div className="mt-2 flex items-center justify-between">
             {assigneeName ? (
@@ -68,7 +70,7 @@ export function KanbanCard({
               <span />
             )}
             {submissionCount > 0 && (
-              <div className="flex items-center gap-1 text-[11px] text-[#676879]">
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <GitCommit className="h-3 w-3" />
                 {submissionCount}
               </div>

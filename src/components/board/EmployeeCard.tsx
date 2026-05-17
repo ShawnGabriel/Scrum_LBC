@@ -33,14 +33,14 @@ export function EmployeeCard({
               className="h-9 w-9 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
               <UserIcon className="h-4 w-4" />
             </div>
           )}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">{user.name}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{user.name}</h3>
             {isOwner && (
-              <span className="text-xs text-indigo-500 font-medium">You</span>
+              <span className="text-xs text-primary0 font-medium">You</span>
             )}
           </div>
         </div>
@@ -49,7 +49,7 @@ export function EmployeeCard({
       <CardContent className="flex-1">
         {assignedIdea ? (
           <div className="flex flex-col gap-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {assignedIdea.title}
             </h4>
             <div className="flex flex-col gap-2">
@@ -71,7 +71,7 @@ export function EmployeeCard({
             </div>
           </div>
         ) : (
-          <p className="text-sm text-gray-400 italic">No idea assigned</p>
+          <p className="text-sm text-label italic">No idea assigned</p>
         )}
       </CardContent>
     </Card>

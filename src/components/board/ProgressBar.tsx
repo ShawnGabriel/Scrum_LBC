@@ -8,13 +8,13 @@ export function ProgressBar({ completed, total }: ProgressBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[#E6E9EF]">
+      <div className="h-1 w-16 overflow-hidden rounded-sm bg-border">
         <div
-          className="h-full rounded-full bg-[#00C875] transition-all"
+          className="h-full bg-status-green transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-[11px] text-[#676879]">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
         {completed}/{total}
       </span>
     </div>

@@ -42,7 +42,7 @@ export default async function IdeasPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Ideas</h1>
+        <h1 className="text-xl font-semibold text-foreground">Ideas</h1>
         {isCTO(user.role) && (
           <Link href="/ideas/new">
             <Button>Create Idea</Button>
@@ -51,38 +51,38 @@ export default async function IdeasPage() {
       </div>
 
       {ideas.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">No ideas yet.</p>
+        <div className="rounded-lg border border-border bg-surface p-8 text-center">
+          <p className="text-sm text-muted-foreground">No ideas yet.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-hidden rounded-lg border border-border bg-surface">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-surface-elevated">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Title
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Status
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Assigned To
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Tasks
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Created
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {ideas.map((idea) => (
-                <tr key={idea.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={idea.id} className="hover:bg-surface-elevated transition-colors">
                   <td className="px-4 py-3">
                     <Link
                       href={`/ideas/${idea.id}`}
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                      className="text-sm font-medium text-primary hover:text-primary"
                     >
                       {idea.title}
                     </Link>
@@ -92,13 +92,13 @@ export default async function IdeasPage() {
                       {idea.status.replace("_", " ")}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
                     {idea.assignee?.name ?? "Unassigned"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
                     {idea._count.tasks}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-400">
+                  <td className="px-4 py-3 text-sm text-label">
                     {formatRelativeTime(new Date(idea.createdAt))}
                   </td>
                 </tr>

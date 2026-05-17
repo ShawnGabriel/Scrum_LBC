@@ -105,17 +105,17 @@ export function RevisionForm({
           {revisions.map((rev, index) => (
             <div
               key={index}
-              className="flex flex-col gap-2 rounded-md border border-gray-200 p-3"
+              className="flex flex-col gap-2 rounded-md border border-border p-3"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500 uppercase">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">
                   Revision {index + 1}
                 </span>
                 {revisions.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeRevision(index)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-label hover:text-status-orange transition-colors"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

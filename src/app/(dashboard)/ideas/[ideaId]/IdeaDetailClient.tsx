@@ -69,7 +69,7 @@ export function IdeaDetailClient({ tasks, isOwner, isCTO }: IdeaDetailClientProp
 
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+      <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
         Tasks
       </h2>
 
@@ -125,17 +125,17 @@ export function IdeaDetailClient({ tasks, isOwner, isCTO }: IdeaDetailClientProp
 
             {/* Submission history */}
             {task.submissions.length > 0 && (
-              <div className="ml-4 rounded-md border border-gray-100 bg-gray-50 p-3 space-y-2">
-                <p className="text-xs font-medium text-gray-500 uppercase">
+              <div className="ml-4 rounded-md border border-border bg-surface-elevated p-3 space-y-2">
+                <p className="text-xs font-medium text-muted-foreground uppercase">
                   Submissions
                 </p>
                 {task.submissions.map((sub) => (
-                  <div key={sub.id} className="flex items-center gap-2 text-xs text-gray-600">
-                    <code className="rounded bg-gray-200 px-1.5 py-0.5 font-mono">
+                  <div key={sub.id} className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <code className="rounded bg-surface-elevated px-1.5 py-0.5 font-mono">
                       {sub.commitRef.substring(0, 8)}
                     </code>
                     {sub.message && <span className="truncate">{sub.message}</span>}
-                    <span className="ml-auto text-gray-400 shrink-0">
+                    <span className="ml-auto text-label shrink-0">
                       {formatRelativeTime(new Date(sub.createdAt))}
                     </span>
                   </div>

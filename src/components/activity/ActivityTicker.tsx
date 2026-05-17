@@ -37,8 +37,8 @@ export function ActivityTicker({ activities }: ActivityTickerProps) {
   if (activities.length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto border-t border-gray-200 bg-gray-50 px-4 py-2">
-      <Activity className="h-4 w-4 shrink-0 text-gray-400" />
+    <div className="flex items-center gap-2 overflow-x-auto border-t border-border bg-surface-elevated px-4 py-2">
+      <Activity className="h-4 w-4 shrink-0 text-label" />
       <div className="flex items-center gap-4 whitespace-nowrap">
         {activities.map((activity) => {
           const details = (activity.details ?? {}) as Record<string, unknown>;
@@ -53,9 +53,9 @@ export function ActivityTicker({ activities }: ActivityTickerProps) {
           return (
             <span
               key={activity.id}
-              className="text-xs text-gray-500"
+              className="text-xs text-muted-foreground"
             >
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-foreground">
                 {activity.user.name}
               </span>
               {" → "}
@@ -65,7 +65,7 @@ export function ActivityTicker({ activities }: ActivityTickerProps) {
               {shortTitle && (
                 <>
                   {" on "}
-                  <span className="text-gray-600">{shortTitle}</span>
+                  <span className="text-muted-foreground">{shortTitle}</span>
                 </>
               )}
               {" ("}

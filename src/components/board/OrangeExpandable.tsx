@@ -52,7 +52,7 @@ export function OrangeExpandable({ revisionTasks }: OrangeExpandableProps) {
               className="flex flex-col gap-0.5 rounded bg-orange-50 px-2 py-1.5"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-gray-700 truncate">
+                <span className="text-xs font-medium text-foreground truncate">
                   {rt.title}
                 </span>
                 <Badge variant={statusVariant(rt.status)} className="text-[10px] px-1.5 py-0">

@@ -57,11 +57,11 @@ export function MyWorkClient({ idea, userId }: MyWorkClientProps) {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5 space-y-4">
+    <div className="rounded-lg border border-border bg-surface p-5 space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{idea.title}</h2>
-          <p className="mt-1 text-sm text-gray-500">{idea.description}</p>
+          <h2 className="text-lg font-semibold text-foreground">{idea.title}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{idea.description}</p>
         </div>
         <Badge variant={statusBadgeVariant(idea.status)}>
           {idea.status.replace("_", " ")}

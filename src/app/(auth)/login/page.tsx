@@ -41,26 +41,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-indigo-600">
-            Scrum LBC
-          </CardTitle>
+          <p className="text-[10px] uppercase tracking-wider text-label">
+            AUTH · SIGN IN
+          </p>
+          <CardTitle className="text-lg text-primary">Scrum · LBC</CardTitle>
           <CardDescription>Quantitative Research Division</CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {error && (
-              <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                <AlertCircle className="h-4 w-4 shrink-0" />
+              <div className="flex items-center gap-2 rounded-sm border border-status-orange/30 bg-status-orange/10 px-3 py-2 text-[11px] uppercase tracking-wider text-status-orange">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                 {error}
               </div>
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="text-[10px] font-medium uppercase tracking-wider text-label"
+              >
                 Email
               </label>
               <Input
@@ -75,13 +79,16 @@ export default function LoginPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="text-[10px] font-medium uppercase tracking-wider text-label"
+              >
                 Password
               </label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -89,8 +96,8 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-2">
-              {loading ? "Signing in..." : "Sign In"}
+            <Button type="submit" disabled={loading} className="mt-2 w-full">
+              {loading ? "Signing in…" : "Sign In"}
             </Button>
           </form>
         </CardContent>

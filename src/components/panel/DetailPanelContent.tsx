@@ -9,7 +9,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { StatusPill } from "@/components/board/StatusPill";
 import { SubmitWorkDialog } from "@/components/tasks/SubmitWorkDialog";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
-import { getStatusLabel } from "@/lib/status";
 import { formatRelativeTime } from "@/lib/utils";
 import type { TaskStatus } from "@/generated/prisma/client";
 
@@ -120,9 +119,11 @@ export function DetailPanelContent({
   return (
     <div className="flex flex-col">
       {/* Task info */}
-      <div className="border-b border-[#E6E9EF] px-5 py-4">
+      <div className="border-b border-border px-5 py-4">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-[#323338]">{task.title}</h3>
+          <h3 className="text-[14px] font-semibold uppercase tracking-wide text-foreground">
+            {task.title}
+          </h3>
           <StatusPill
             taskId={task.id}
             status={task.status}
@@ -132,57 +133,65 @@ export function DetailPanelContent({
         </div>
 
         {task.description && (
-          <p className="mb-3 text-sm text-[#676879]">{task.description}</p>
+          <p className="mb-3 text-[12px] text-muted-foreground">{task.description}</p>
         )}
 
         {task.isRevision && task.revisionNote && (
-          <div className="mb-3 rounded-md bg-[#E2445C]/5 border border-[#E2445C]/20 px-3 py-2">
-            <p className="text-xs font-medium text-[#E2445C]">Revision Note</p>
-            <p className="mt-0.5 text-sm text-[#323338]">{task.revisionNote}</p>
+          <div className="mb-3 rounded-sm border border-status-orange/30 bg-status-orange/10 px-3 py-2">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-status-orange">
+              Revision Note
+            </p>
+            <p className="mt-0.5 text-[12px] text-foreground">{task.revisionNote}</p>
           </div>
         )}
 
         {/* Metadata */}
-        <div className="flex flex-col gap-2 text-sm">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-20 text-xs text-[#676879]">Idea</span>
-            <span className="text-[#323338]">{task.idea.title}</span>
+            <span className="w-20 text-[10px] uppercase tracking-wider text-label">Idea</span>
+            <span className="text-[11px] uppercase tracking-wider text-foreground">
+              {task.idea.title}
+            </span>
           </div>
           {task.idea.assignee && (
             <div className="flex items-center gap-2">
-              <span className="w-20 text-xs text-[#676879]">Assignee</span>
+              <span className="w-20 text-[10px] uppercase tracking-wider text-label">Assignee</span>
               <div className="flex items-center gap-1.5">
                 <Avatar name={task.idea.assignee.name} size="xs" />
-                <span className="text-sm text-[#323338]">{task.idea.assignee.name}</span>
+                <span className="text-[11px] uppercase tracking-wider text-foreground">
+                  {task.idea.assignee.name}
+                </span>
               </div>
             </div>
           )}
           <div className="flex items-center gap-2">
-            <span className="w-20 text-xs text-[#676879]">Created</span>
-            <span className="text-sm text-[#323338]">{formatRelativeTime(new Date(task.createdAt))}</span>
+            <span className="w-20 text-[10px] uppercase tracking-wider text-label">Created</span>
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              {formatRelativeTime(new Date(task.createdAt))}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="border-b border-[#E6E9EF] px-5 py-3">
+      <div className="border-b border-border px-5 py-3">
         <div className="flex flex-wrap gap-2">
           {task.status === "WHITE" && isAssignee && (
             <Button size="sm" onClick={handleStartWork}>
-              <Play className="mr-1.5 h-3.5 w-3.5" />
+              <Play className="mr-1.5 h-3 w-3" />
               Start Working
             </Button>
           )}
           {task.status === "YELLOW" && isAssignee && (
             <Button size="sm" onClick={() => setSubmitOpen(true)}>
-              <GitCommit className="mr-1.5 h-3.5 w-3.5" />
+              <GitCommit className="mr-1.5 h-3 w-3" />
               Submit Work
             </Button>
           )}
           {task.status === "GREEN" && isCTO && (
             <>
               <Button size="sm" onClick={handleApprove} disabled={loading}>
-                <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+                <CheckCircle2 className="mr-1.5 h-3 w-3" />
                 {loading ? "Approving..." : "Approve"}
               </Button>
               <Button
@@ -190,7 +199,7 @@ export function DetailPanelContent({
                 variant="outline"
                 onClick={() => setRevisionOpen(true)}
               >
-                <AlertCircle className="mr-1.5 h-3.5 w-3.5" />
+                <AlertCircle className="mr-1.5 h-3 w-3" />
                 Request Revisions
               </Button>
             </>
@@ -200,28 +209,30 @@ export function DetailPanelContent({
 
       {/* Submissions */}
       {task.submissions.length > 0 && (
-        <div className="border-b border-[#E6E9EF] px-5 py-4">
-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#676879]">
+        <div className="border-b border-border px-5 py-4">
+          <h4 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-label">
             Submissions
           </h4>
           <div className="space-y-3">
             {task.submissions.map((sub) => (
               <div key={sub.id} className="flex items-start gap-3">
-                <GitCommit className="mt-0.5 h-4 w-4 shrink-0 text-[#00C875]" />
+                <GitCommit className="mt-0.5 h-3.5 w-3.5 shrink-0 text-status-green" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <code className="rounded bg-[#F5F6F8] px-1.5 py-0.5 text-xs text-[#323338]">
+                    <code className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 text-[10px] text-primary">
                       {sub.commitRef.slice(0, 8)}
                     </code>
                     {sub.branch && (
-                      <span className="text-xs text-[#676879]">{sub.branch}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {sub.branch}
+                      </span>
                     )}
                   </div>
                   {sub.message && (
-                    <p className="mt-0.5 text-xs text-[#676879]">{sub.message}</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{sub.message}</p>
                   )}
-                  <p className="mt-0.5 text-[11px] text-[#C5C7D0]">
-                    by {sub.user.name} {formatRelativeTime(new Date(sub.createdAt))}
+                  <p className="mt-0.5 text-[10px] uppercase tracking-wider text-label">
+                    by {sub.user.name} · {formatRelativeTime(new Date(sub.createdAt))}
                   </p>
                 </div>
               </div>
@@ -232,24 +243,28 @@ export function DetailPanelContent({
 
       {/* Revision tasks */}
       {task.revisionTasks.length > 0 && (
-        <div className="border-b border-[#E6E9EF] px-5 py-4">
-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#676879]">
+        <div className="border-b border-border px-5 py-4">
+          <h4 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-label">
             Revisions
           </h4>
           <div className="space-y-2">
             {task.revisionTasks.map((rev) => (
               <div
                 key={rev.id}
-                className="flex items-start gap-2 rounded-md border border-[#E6E9EF] px-3 py-2"
+                className="flex items-start gap-2 rounded-sm border border-border bg-surface-elevated px-3 py-2"
               >
                 <div
-                  className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: rev.status === "COMPLETED" ? "#00C875" : "#E2445C" }}
+                  className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: rev.status === "COMPLETED" ? "#52D499" : "#E66478",
+                  }}
                 />
                 <div>
-                  <p className="text-sm text-[#323338]">{rev.title}</p>
+                  <p className="text-[11px] text-foreground">{rev.title}</p>
                   {rev.revisionNote && (
-                    <p className="mt-0.5 text-xs text-[#676879]">{rev.revisionNote}</p>
+                    <p className="mt-0.5 text-[10px] text-muted-foreground">
+                      {rev.revisionNote}
+                    </p>
                   )}
                 </div>
               </div>
@@ -261,19 +276,21 @@ export function DetailPanelContent({
       {/* Activity */}
       {task.activities.length > 0 && (
         <div className="px-5 py-4">
-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#676879]">
+          <h4 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-label">
             Activity
           </h4>
           <div className="space-y-3">
             {task.activities.map((act) => (
               <div key={act.id} className="flex items-start gap-2">
-                <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#C5C7D0]" />
+                <Clock className="mt-0.5 h-3 w-3 shrink-0 text-label" />
                 <div>
-                  <p className="text-xs text-[#323338]">
+                  <p className="text-[11px] text-foreground">
                     <span className="font-medium">{act.user.name}</span>{" "}
-                    {act.action.toLowerCase().replace(/_/g, " ")}
+                    <span className="text-muted-foreground">
+                      {act.action.toLowerCase().replace(/_/g, " ")}
+                    </span>
                   </p>
-                  <p className="text-[11px] text-[#C5C7D0]">
+                  <p className="text-[10px] uppercase tracking-wider text-label">
                     {formatRelativeTime(new Date(act.createdAt))}
                   </p>
                 </div>

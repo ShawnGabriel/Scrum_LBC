@@ -21,9 +21,9 @@ export default async function ActivityPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Activity Feed</h1>
+      <h1 className="text-xl font-semibold text-foreground">Activity Feed</h1>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-border bg-surface p-4">
         <ActivityFeed activities={JSON.parse(JSON.stringify(activities))} />
       </div>
 

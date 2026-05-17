@@ -41,19 +41,21 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
   }
 
   return (
-    <aside className="flex h-full w-[240px] shrink-0 flex-col bg-[#292F4C]">
+    <aside className="flex h-full w-[240px] shrink-0 flex-col border-r border-border bg-sidebar">
       {/* Workspace header */}
       <div className="flex items-center gap-2 px-5 py-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0073EA] text-sm font-bold text-white">
+        <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground">
           S
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Scrum LBC</p>
-          <p className="text-[11px] text-[#C5C7D0]">Workspace</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+            Scrum · LBC
+          </p>
+          <p className="text-[10px] uppercase tracking-wider text-label">Workspace</p>
         </div>
       </div>
 
-      <div className="mx-3 border-t border-white/10" />
+      <div className="mx-3 border-t border-border" />
 
       {/* Navigation */}
       <nav className="flex-1 space-y-0.5 px-2 pt-3">
@@ -65,13 +67,13 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors",
                 active
-                  ? "border-l-[3px] border-l-[#0073EA] bg-[#363D59] text-white"
-                  : "border-l-[3px] border-l-transparent text-[#C5C7D0] hover:bg-[#363D59] hover:text-white"
+                  ? "border-l-[2px] border-l-primary bg-sidebar-hover text-foreground"
+                  : "border-l-[2px] border-l-transparent text-sidebar-text hover:bg-sidebar-hover hover:text-foreground"
               )}
             >
-              <Icon className="h-[18px] w-[18px]" />
+              <Icon className="h-[16px] w-[16px]" />
               {link.label}
             </Link>
           );
@@ -79,8 +81,8 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
 
         {userRole === "CTO" && (
           <>
-            <div className="my-2 mx-1 border-t border-white/10" />
-            <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-[#676879]">
+            <div className="my-2 mx-1 border-t border-border" />
+            <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-label">
               Management
             </p>
             {ctoLinks.map((link) => {
@@ -91,13 +93,13 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors",
                     active
-                      ? "border-l-[3px] border-l-[#0073EA] bg-[#363D59] text-white"
-                      : "border-l-[3px] border-l-transparent text-[#C5C7D0] hover:bg-[#363D59] hover:text-white"
+                      ? "border-l-[2px] border-l-primary bg-sidebar-hover text-foreground"
+                      : "border-l-[2px] border-l-transparent text-sidebar-text hover:bg-sidebar-hover hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-[18px] w-[18px]" />
+                  <Icon className="h-[16px] w-[16px]" />
                   {link.label}
                 </Link>
               );
@@ -107,12 +109,12 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
       </nav>
 
       {/* User info at bottom */}
-      <div className="mx-3 border-t border-white/10" />
+      <div className="mx-3 border-t border-border" />
       <div className="flex items-center gap-3 px-4 py-3">
         <Avatar name={userName} size="sm" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-white">{userName}</p>
-          <p className="text-[11px] text-[#C5C7D0]">{userRole}</p>
+          <p className="truncate text-[11px] font-medium text-foreground">{userName}</p>
+          <p className="text-[10px] uppercase tracking-wider text-label">{userRole}</p>
         </div>
       </div>
     </aside>

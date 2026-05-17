@@ -51,8 +51,8 @@ export default async function StandupPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Daily Standup</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-xl font-semibold text-foreground">Daily Standup</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Activity since {yesterday.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
         </p>
       </div>
@@ -72,7 +72,7 @@ export default async function StandupPage() {
           return (
             <div
               key={employee.id}
-              className="rounded-lg border border-gray-200 bg-white p-4 space-y-3"
+              className="rounded-lg border border-border bg-surface p-4 space-y-3"
             >
               <div className="flex items-center gap-3">
                 {employee.avatarUrl ? (
@@ -82,21 +82,21 @@ export default async function StandupPage() {
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-600">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
                     {employee.name.charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span className="font-medium text-gray-900">{employee.name}</span>
+                <span className="font-medium text-foreground">{employee.name}</span>
               </div>
 
               {!hasActivity ? (
-                <p className="text-sm text-gray-400 italic">No changes</p>
+                <p className="text-sm text-label italic">No changes</p>
               ) : (
                 <div className="space-y-3">
                   {/* Status changes since yesterday */}
                   {changedTasks.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1.5">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
                         Recent Changes
                       </p>
                       <div className="space-y-1.5">
@@ -106,17 +106,17 @@ export default async function StandupPage() {
                               key={transition.id}
                               className="flex items-center gap-2 text-sm"
                             >
-                              <span className="text-gray-700 truncate">
+                              <span className="text-foreground truncate">
                                 {task.title}
                               </span>
                               <Badge variant={taskStatusVariant(transition.fromStatus)} className="text-[10px] px-1.5 py-0">
                                 {transition.fromStatus}
                               </Badge>
-                              <span className="text-gray-400 text-xs">-&gt;</span>
+                              <span className="text-label text-xs">-&gt;</span>
                               <Badge variant={taskStatusVariant(transition.toStatus)} className="text-[10px] px-1.5 py-0">
                                 {transition.toStatus}
                               </Badge>
-                              <span className="ml-auto text-xs text-gray-400 shrink-0">
+                              <span className="ml-auto text-xs text-label shrink-0">
                                 {formatRelativeTime(new Date(transition.changedAt))}
                               </span>
                             </div>
@@ -129,7 +129,7 @@ export default async function StandupPage() {
                   {/* Currently in progress */}
                   {yellowTasks.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1.5">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
                         In Progress
                       </p>
                       <div className="space-y-1">
@@ -138,7 +138,7 @@ export default async function StandupPage() {
                             <Badge variant="yellow" className="text-[10px] px-1.5 py-0">
                               YELLOW
                             </Badge>
-                            <span className="text-gray-700 truncate">{task.title}</span>
+                            <span className="text-foreground truncate">{task.title}</span>
                           </div>
                         ))}
                       </div>
@@ -148,7 +148,7 @@ export default async function StandupPage() {
                   {/* Blocked on revisions */}
                   {orangeTasks.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-1.5">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
                         Needs Revisions
                       </p>
                       <div className="space-y-1">
@@ -157,7 +157,7 @@ export default async function StandupPage() {
                             <Badge variant="orange" className="text-[10px] px-1.5 py-0">
                               ORANGE
                             </Badge>
-                            <span className="text-gray-700 truncate">{task.title}</span>
+                            <span className="text-foreground truncate">{task.title}</span>
                           </div>
                         ))}
                       </div>

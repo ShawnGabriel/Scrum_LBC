@@ -41,7 +41,7 @@ export function LoadMoreActivities({ initialCursor }: LoadMoreActivitiesProps) {
   return (
     <>
       {activities.length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="rounded-lg border border-border bg-surface p-4">
           <ActivityFeed activities={activities} />
         </div>
       )}

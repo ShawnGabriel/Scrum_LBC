@@ -46,8 +46,10 @@ export function TableView({ ideas, currentUserId, userRole, onTaskClick }: Table
   if (ideas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="text-sm text-[#676879]">No active ideas yet</p>
-        <p className="mt-1 text-xs text-[#C5C7D0]">
+        <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          No active ideas yet
+        </p>
+        <p className="mt-1 text-[10px] uppercase tracking-wider text-label">
           Create an idea to get started
         </p>
       </div>

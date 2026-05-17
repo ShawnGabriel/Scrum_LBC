@@ -34,14 +34,17 @@ export function StatusPill({ taskId, status, canEdit, onStatusChange }: StatusPi
           e.stopPropagation();
           if (canEdit) setIsOpen(!isOpen);
         }}
-        className="inline-flex min-w-[120px] items-center justify-center rounded-sm px-3 py-1 text-xs font-medium text-white transition-opacity hover:opacity-90"
-        style={{ backgroundColor: getStatusColor(status) }}
+        className="inline-flex min-w-[120px] items-center justify-center rounded-sm px-3 py-1 text-[10px] font-medium uppercase tracking-wider transition-opacity hover:opacity-90"
+        style={{
+          backgroundColor: getStatusColor(status),
+          color: "#050B1A",
+        }}
       >
         {getStatusLabel(status)}
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1 w-[160px] overflow-hidden rounded-md border border-[#E6E9EF] bg-white shadow-lg">
+        <div className="absolute top-full left-0 z-50 mt-1 w-[180px] overflow-hidden rounded-sm border border-border bg-surface-elevated shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
           {STATUS_ORDER.map((s) => (
             <button
               key={s}
@@ -52,10 +55,10 @@ export function StatusPill({ taskId, status, canEdit, onStatusChange }: StatusPi
                 }
                 setIsOpen(false);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-xs hover:bg-[#F5F6F8]"
+              className="flex w-full items-center gap-2 px-3 py-2 text-[11px] uppercase tracking-wider text-foreground hover:bg-surface-hover"
             >
               <span
-                className="h-3 w-3 rounded-full"
+                className="h-2 w-2 rounded-full"
                 style={{ backgroundColor: STATUS_CONFIG[s].color }}
               />
               <span className={s === status ? "font-semibold" : ""}>

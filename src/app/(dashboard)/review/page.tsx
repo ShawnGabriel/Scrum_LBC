@@ -40,15 +40,15 @@ export default async function ReviewPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Review Queue</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-xl font-semibold text-foreground">Review Queue</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {sorted.length} task{sorted.length !== 1 ? "s" : ""} awaiting review
         </p>
       </div>
 
       {sorted.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">No tasks to review right now.</p>
+        <div className="rounded-lg border border-border bg-surface p-12 text-center">
+          <p className="text-muted-foreground">No tasks to review right now.</p>
         </div>
       ) : (
         <ReviewQueue tasks={JSON.parse(JSON.stringify(sorted))} />

@@ -86,8 +86,8 @@ export function SubmitWorkDialog({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="commitRef" className="text-sm font-medium text-gray-700">
-              Commit Reference <span className="text-red-500">*</span>
+            <label htmlFor="commitRef" className="text-sm font-medium text-foreground">
+              Commit Reference <span className="text-status-orange">*</span>
             </label>
             <Input
               id="commitRef"
@@ -99,7 +99,7 @@ export function SubmitWorkDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="repoUrl" className="text-sm font-medium text-gray-700">
+            <label htmlFor="repoUrl" className="text-sm font-medium text-foreground">
               Repository URL
             </label>
             <Input
@@ -111,7 +111,7 @@ export function SubmitWorkDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="branch" className="text-sm font-medium text-gray-700">
+            <label htmlFor="branch" className="text-sm font-medium text-foreground">
               Branch
             </label>
             <Input
@@ -123,7 +123,7 @@ export function SubmitWorkDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="message" className="text-sm font-medium text-gray-700">
+            <label htmlFor="message" className="text-sm font-medium text-foreground">
               Message
             </label>
             <Textarea

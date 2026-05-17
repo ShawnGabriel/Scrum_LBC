@@ -67,25 +67,25 @@ export default async function IdeaDetailPage({
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-gray-900">{idea.title}</h1>
-          <p className="text-sm text-gray-500">{idea.description}</p>
+          <h1 className="text-xl font-semibold text-foreground">{idea.title}</h1>
+          <p className="text-sm text-muted-foreground">{idea.description}</p>
         </div>
         <Badge variant={statusBadgeVariant(idea.status)}>
           {idea.status.replace("_", " ")}
         </Badge>
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
         <div>
-          <span className="font-medium text-gray-700">Created by:</span>{" "}
+          <span className="font-medium text-foreground">Created by:</span>{" "}
           {idea.creator.name}
         </div>
         <div>
-          <span className="font-medium text-gray-700">Assigned to:</span>{" "}
+          <span className="font-medium text-foreground">Assigned to:</span>{" "}
           {idea.assignee?.name ?? "Unassigned"}
         </div>
         <div>
-          <span className="font-medium text-gray-700">Created:</span>{" "}
+          <span className="font-medium text-foreground">Created:</span>{" "}
           {formatRelativeTime(new Date(idea.createdAt))}
         </div>
       </div>
@@ -98,8 +98,8 @@ export default async function IdeaDetailPage({
 
       {/* Activity Log */}
       {idea.activityLogs.length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+        <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
             Activity
           </h2>
           <div className="flex flex-col gap-2">
@@ -107,12 +107,12 @@ export default async function IdeaDetailPage({
               const details = (log.details ?? {}) as Record<string, unknown>;
               return (
                 <div key={log.id} className="flex items-start gap-2 text-sm">
-                  <span className="font-medium text-gray-700">{log.user.name}</span>
-                  <span className="text-gray-500">
+                  <span className="font-medium text-foreground">{log.user.name}</span>
+                  <span className="text-muted-foreground">
                     {log.action.toLowerCase().replace(/_/g, " ")}
                     {details.taskTitle ? ` - ${details.taskTitle}` : ""}
                   </span>
-                  <span className="ml-auto text-xs text-gray-400 shrink-0">
+                  <span className="ml-auto text-xs text-label shrink-0">
                     {formatRelativeTime(new Date(log.createdAt))}
                   </span>
                 </div>

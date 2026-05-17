@@ -35,8 +35,13 @@ export function BoardClient({ ideas, currentUserId, userRole }: BoardClientProps
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-[#323338]">Team Board</h1>
-            <p className="text-xs text-[#676879]">
+            <p className="text-[10px] uppercase tracking-wider text-label">
+              SCRUM · LBC · BOARD
+            </p>
+            <h1 className="mt-1 text-lg font-semibold uppercase tracking-wide text-foreground">
+              Team Board
+            </h1>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               Overview of all tasks and progress
             </p>
           </div>

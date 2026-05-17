@@ -63,21 +63,21 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
         return (
           <div
             key={task.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 space-y-3"
+            className="rounded-lg border border-border bg-surface p-4 space-y-3"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {task.title}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Idea: {task.idea.title}
                 </p>
               </div>
               <Badge variant="green">GREEN</Badge>
             </div>
 
-            <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
               {task.idea.assignee && (
                 <div className="flex items-center gap-1.5">
                   {task.idea.assignee.avatarUrl ? (
@@ -87,7 +87,7 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
                       className="h-4 w-4 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-4 w-4 items-center justify-center rounded-full bg-indigo-100 text-[10px] font-medium text-indigo-600">
+                    <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[10px] font-medium text-primary">
                       {task.idea.assignee.name.charAt(0)}
                     </div>
                   )}
@@ -98,7 +98,7 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
               {latestSubmission && (
                 <div className="flex items-center gap-1">
                   <GitCommit className="h-3 w-3" />
-                  <code className="rounded bg-gray-100 px-1 py-0.5 font-mono">
+                  <code className="rounded bg-surface-elevated px-1 py-0.5 font-mono">
                     {latestSubmission.commitRef.substring(0, 8)}
                   </code>
                 </div>

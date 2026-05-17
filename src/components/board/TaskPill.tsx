@@ -58,16 +58,16 @@ export function TaskPill({ task, isOwner, onStatusChange, onSubmit }: TaskPillPr
 
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-md border bg-white px-3 py-2"
+      className="flex flex-col gap-1.5 rounded-md border bg-surface px-3 py-2"
       style={{ borderLeftWidth: "4px", borderLeftColor: colors.border }}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-gray-800 truncate">
+        <span className="text-sm font-medium text-foreground truncate">
           {task.title}
         </span>
         <div className="flex items-center gap-2 shrink-0">
           {timeInStatus && (
-            <span className="text-xs text-gray-400">{timeInStatus}</span>
+            <span className="text-xs text-label">{timeInStatus}</span>
           )}
           <Badge variant={statusVariant(task.status)}>{task.status}</Badge>
         </div>

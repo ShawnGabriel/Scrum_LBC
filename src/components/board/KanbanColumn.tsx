@@ -21,13 +21,13 @@ export function KanbanColumn({ status, children, itemIds, count }: KanbanColumnP
       {/* Column header */}
       <div className="mb-2 flex items-center gap-2 px-1">
         <div
-          className="h-2.5 w-2.5 rounded-full"
+          className="h-2 w-2 rounded-full"
           style={{ backgroundColor: config.color }}
         />
-        <span className="text-sm font-semibold text-[#323338]">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
           {config.label}
         </span>
-        <span className="rounded-full bg-[#F5F6F8] px-1.5 py-0.5 text-[11px] font-medium text-[#676879]">
+        <span className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
           {count}
         </span>
       </div>
@@ -36,10 +36,10 @@ export function KanbanColumn({ status, children, itemIds, count }: KanbanColumnP
       <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={`flex min-h-[100px] flex-1 flex-col gap-2 rounded-lg border-2 border-dashed p-2 transition-colors ${
+          className={`flex min-h-[100px] flex-1 flex-col gap-2 rounded-sm border p-2 transition-colors ${
             isOver
-              ? "border-[#0073EA] bg-[#0073EA]/5"
-              : "border-transparent bg-[#F5F6F8]"
+              ? "border-primary bg-primary/5"
+              : "border-border bg-surface"
           }`}
         >
           {children}

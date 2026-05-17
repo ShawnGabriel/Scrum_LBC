@@ -29,10 +29,10 @@ export default async function MyWorkPage() {
   if (ideas.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-xl font-semibold text-gray-900">My Work</h1>
-        <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">No idea assigned to you yet.</p>
-          <p className="mt-1 text-sm text-gray-400">
+        <h1 className="text-xl font-semibold text-foreground">My Work</h1>
+        <div className="rounded-lg border border-border bg-surface p-12 text-center">
+          <p className="text-muted-foreground">No idea assigned to you yet.</p>
+          <p className="mt-1 text-sm text-label">
             Your CTO will assign ideas for you to work on.
           </p>
         </div>
@@ -42,7 +42,7 @@ export default async function MyWorkPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">My Work</h1>
+      <h1 className="text-xl font-semibold text-foreground">My Work</h1>
       {ideas.map((idea) => (
         <MyWorkClient
           key={idea.id}

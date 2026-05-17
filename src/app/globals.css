@@ -1,22 +1,51 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #FAFBFC;
-  --color-foreground: #1E293B;
-  --color-sidebar: #1E293B;
-  --color-sidebar-text: #CBD5E1;
-  --color-sidebar-active: #6366F1;
-  --color-primary: #6366F1;
+  /* Surfaces */
+  --color-background: #F6F7FB;
+  --color-foreground: #323338;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F5F6F8;
+
+  /* Sidebar */
+  --color-sidebar: #292F4C;
+  --color-sidebar-hover: #363D59;
+  --color-sidebar-text: #C5C7D0;
+  --color-sidebar-active: #0073EA;
+
+  /* Primary (monday blue) */
+  --color-primary: #0073EA;
+  --color-primary-hover: #0060B9;
   --color-primary-foreground: #FFFFFF;
-  --color-muted: #F1F5F9;
-  --color-muted-foreground: #64748B;
-  --color-border: #E2E8F0;
+
+  /* Status colors */
+  --color-status-not-started: #C4C4C4;
+  --color-status-working: #FDAB3D;
+  --color-status-review: #00C875;
+  --color-status-stuck: #E2445C;
+  --color-status-done: #00C875;
+
+  /* Borders & muted */
+  --color-border: #E6E9EF;
+  --color-muted: #F5F6F8;
+  --color-muted-foreground: #676879;
+
+  /* Cards */
   --color-card: #FFFFFF;
-  --color-card-foreground: #1E293B;
-  --color-destructive: #EF4444;
+  --color-card-foreground: #323338;
+
+  /* Destructive */
+  --color-destructive: #E2445C;
   --color-destructive-foreground: #FFFFFF;
-  --font-sans: var(--font-geist-sans);
+
+  /* Typography */
+  --font-sans: var(--font-figtree);
   --font-mono: var(--font-geist-mono);
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 body {
@@ -36,10 +65,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #C5C7D0;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #676879;
 }

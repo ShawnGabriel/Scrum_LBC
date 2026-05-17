@@ -8,15 +8,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500",
+          "bg-[#0073EA] text-white hover:bg-[#0060B9] focus-visible:ring-[#0073EA]",
         secondary:
-          "bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-500",
+          "bg-[#F5F6F8] text-[#323338] hover:bg-[#E6E9EF] focus-visible:ring-[#0073EA]",
         outline:
-          "border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-500",
+          "border border-[#E6E9EF] bg-transparent text-[#323338] hover:bg-[#F5F6F8] focus-visible:ring-[#0073EA]",
         ghost:
-          "bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-500",
+          "bg-transparent text-[#323338] hover:bg-[#F5F6F8] focus-visible:ring-[#0073EA]",
         destructive:
-          "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
+          "bg-[#E2445C] text-white hover:bg-[#CE3048] focus-visible:ring-[#E2445C]",
       },
       size: {
         sm: "h-8 px-3 text-xs",

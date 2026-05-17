@@ -7,11 +7,11 @@ export interface StatusConfig {
 }
 
 export const STATUS_CONFIG: Record<TaskStatus, StatusConfig> = {
-  WHITE:     { label: "Not Started",     color: "#C4C4C4", textColor: "#FFFFFF" },
-  YELLOW:    { label: "Working on it",   color: "#FDAB3D", textColor: "#FFFFFF" },
-  GREEN:     { label: "Pending Review",  color: "#00C875", textColor: "#FFFFFF" },
-  ORANGE:    { label: "Stuck",           color: "#E2445C", textColor: "#FFFFFF" },
-  COMPLETED: { label: "Done",            color: "#00C875", textColor: "#FFFFFF" },
+  WHITE:     { label: "Not Started",     color: "#6B7493", textColor: "#050B1A" },
+  YELLOW:    { label: "Working on it",   color: "#E8A538", textColor: "#050B1A" },
+  GREEN:     { label: "Pending Review",  color: "#52D499", textColor: "#050B1A" },
+  ORANGE:    { label: "Stuck",           color: "#E66478", textColor: "#050B1A" },
+  COMPLETED: { label: "Done",            color: "#A8C8FF", textColor: "#050B1A" },
 };
 
 export const STATUS_ORDER: TaskStatus[] = ["WHITE", "YELLOW", "GREEN", "ORANGE", "COMPLETED"];

@@ -3,24 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors",
+  "inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider transition-colors",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-[#0073EA]/10 text-[#0073EA]",
+          "border-primary/30 bg-primary/10 text-primary",
         white:
-          "border-transparent bg-[#C4C4C4] text-white",
+          "border-status-white/30 bg-status-white/10 text-status-white",
         yellow:
-          "border-transparent bg-[#FDAB3D] text-white",
+          "border-status-yellow/30 bg-status-yellow/10 text-status-yellow",
         green:
-          "border-transparent bg-[#00C875] text-white",
+          "border-status-green/30 bg-status-green/10 text-status-green",
         orange:
-          "border-transparent bg-[#E2445C] text-white",
+          "border-status-orange/30 bg-status-orange/10 text-status-orange",
         completed:
-          "border-transparent bg-[#00C875] text-white",
+          "border-status-completed/30 bg-status-completed/10 text-status-completed",
         outline:
-          "border-[#E6E9EF] bg-transparent text-[#676879]",
+          "border-border bg-transparent text-muted-foreground",
       },
     },
     defaultVariants: {
@@ -29,13 +29,34 @@ const badgeVariants = cva(
   }
 );
 
+const dotVariants: Record<string, string> = {
+  default: "bg-primary",
+  white: "bg-status-white",
+  yellow: "bg-status-yellow",
+  green: "bg-status-green",
+  orange: "bg-status-orange",
+  completed: "bg-status-completed",
+  outline: "bg-muted-foreground",
+};
+
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+    VariantProps<typeof badgeVariants> {
+  showDot?: boolean;
+}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, showDot, children, ...props }: BadgeProps) {
+  const variantKey = (variant ?? "default") as string;
   return (
-    <span className={cn(badgeVariants({ variant }), className)} {...props} />
+    <span className={cn(badgeVariants({ variant }), className)} {...props}>
+      {showDot && (
+        <span
+          className={cn("h-1.5 w-1.5 rounded-full", dotVariants[variantKey])}
+          aria-hidden="true"
+        />
+      )}
+      {children}
+    </span>
   );
 }
 

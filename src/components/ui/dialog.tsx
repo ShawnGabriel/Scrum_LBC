@@ -47,7 +47,7 @@ function DialogContent({
       <DialogOverlay onClick={onClose} />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-lg border border-gray-200 bg-white p-6 shadow-lg",
+          "relative z-50 w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg",
           className
         )}
         {...props}
@@ -97,7 +97,7 @@ function DialogDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-sm text-gray-500", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );

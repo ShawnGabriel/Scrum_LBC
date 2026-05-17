@@ -26,13 +26,13 @@ export function useToast() {
 
 const variantStyles: Record<ToastVariant, string> = {
   success: "border-green-500 bg-green-50 text-green-800",
-  error: "border-red-500 bg-red-50 text-red-800",
+  error: "border-status-orange0 bg-status-orange/10 text-status-orange0",
   info: "border-blue-500 bg-blue-50 text-blue-800",
 };
 
 const variantIcons: Record<ToastVariant, React.ReactNode> = {
   success: <CheckCircle className="h-5 w-5 text-green-500" />,
-  error: <AlertCircle className="h-5 w-5 text-red-500" />,
+  error: <AlertCircle className="h-5 w-5 text-status-orange" />,
   info: <Info className="h-5 w-5 text-blue-500" />,
 };
 

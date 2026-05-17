@@ -2,16 +2,16 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const AVATAR_COLORS = [
-  "bg-indigo-500",
-  "bg-emerald-500",
-  "bg-amber-500",
-  "bg-rose-500",
-  "bg-cyan-500",
-  "bg-violet-500",
-  "bg-orange-500",
-  "bg-teal-500",
-  "bg-pink-500",
-  "bg-blue-500",
+  "bg-[#5B7CC4]",
+  "bg-[#7BB8A8]",
+  "bg-[#B89A5C]",
+  "bg-[#C46B7C]",
+  "bg-[#6BA8C4]",
+  "bg-[#9B8FBF]",
+  "bg-[#C48F6B]",
+  "bg-[#5C9B95]",
+  "bg-[#B8829B]",
+  "bg-[#5C7DA8]",
 ];
 
 function getColorFromName(name: string): string {
@@ -49,7 +49,7 @@ function Avatar({ name, size = "md", className }: AvatarProps) {
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center rounded-full font-medium text-white",
+        "inline-flex items-center justify-center rounded-full font-medium text-foreground",
         colorClass,
         sizeClasses[size],
         className

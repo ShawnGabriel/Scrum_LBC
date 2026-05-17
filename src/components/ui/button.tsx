@@ -3,25 +3,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-sm text-xs font-medium uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-[#0073EA] text-white hover:bg-[#0060B9] focus-visible:ring-[#0073EA]",
+          "bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-primary",
         secondary:
-          "bg-[#F5F6F8] text-[#323338] hover:bg-[#E6E9EF] focus-visible:ring-[#0073EA]",
+          "bg-surface-hover text-foreground border border-border hover:bg-surface-elevated focus-visible:ring-primary",
         outline:
-          "border border-[#E6E9EF] bg-transparent text-[#323338] hover:bg-[#F5F6F8] focus-visible:ring-[#0073EA]",
+          "border border-border bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary",
         ghost:
-          "bg-transparent text-[#323338] hover:bg-[#F5F6F8] focus-visible:ring-[#0073EA]",
+          "bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary",
         destructive:
-          "bg-[#E2445C] text-white hover:bg-[#CE3048] focus-visible:ring-[#E2445C]",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        default: "h-10 px-4 py-2",
-        lg: "h-12 px-6 text-base",
+        sm: "h-7 px-2.5 text-[11px]",
+        default: "h-9 px-4",
+        lg: "h-11 px-6 text-sm",
       },
     },
     defaultVariants: {

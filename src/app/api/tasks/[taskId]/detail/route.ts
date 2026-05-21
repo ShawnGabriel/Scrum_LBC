@@ -19,8 +19,8 @@ export async function GET(
       include: {
         idea: {
           include: {
-            assignee: { select: { id: true, name: true, email: true } },
-            creator: { select: { id: true, name: true, email: true } },
+            assignee: { select: { id: true, name: true, username: true } },
+            creator: { select: { id: true, name: true, username: true } },
           },
         },
         submissions: {

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,13 +22,13 @@ export default function LoginPage() {
 
     try {
       const result = await signIn("credentials", {
-        email,
+        username,
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError("Invalid username or password.");
       } else {
         router.push("/");
         router.refresh();
@@ -62,19 +62,22 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-1.5">
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="text-[10px] font-medium uppercase tracking-wider text-label"
               >
-                Email
+                Username
               </label>
               <Input
-                id="email"
-                type="email"
-                placeholder="you@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="e.g. narin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
               />
             </div>
 

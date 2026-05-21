@@ -7,6 +7,7 @@ import { useDetailPanel } from "@/hooks/use-detail-panel";
 import { ViewSwitcher } from "./ViewSwitcher";
 import { TableView } from "./TableView";
 import { KanbanView } from "./KanbanView";
+import { RoadmapView } from "./RoadmapView";
 import { DetailPanel } from "@/components/panel/DetailPanel";
 
 type TaskWithRelations = Task & {
@@ -33,35 +34,38 @@ export function BoardClient({ ideas, currentUserId, userRole }: BoardClientProps
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-label">
-              SCRUM · LBC · BOARD
-            </p>
-            <h1 className="mt-1 text-lg font-semibold uppercase tracking-wide text-foreground">
-              Team Board
-            </h1>
-            <p className="mt-0.5 text-[11px] text-muted-foreground">
-              Overview of all tasks and progress
-            </p>
-          </div>
-          <ViewSwitcher view={view} onChange={setView} />
+        <ViewSwitcher view={view} onChange={setView} />
+
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-label">
+            SCRUM · LBC · BOARD
+          </p>
+          <h1 className="mt-1 text-lg font-semibold uppercase tracking-wide text-foreground">
+            Team Board
+          </h1>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
+            Overview of all tasks and progress
+          </p>
         </div>
 
-        {view === "table" ? (
+        {view === "table" && (
           <TableView
             ideas={ideas}
             currentUserId={currentUserId}
             userRole={userRole}
             onTaskClick={openPanel}
           />
-        ) : (
+        )}
+        {view === "kanban" && (
           <KanbanView
             ideas={ideas}
             currentUserId={currentUserId}
             userRole={userRole}
             onTaskClick={openPanel}
           />
+        )}
+        {view === "roadmap" && (
+          <RoadmapView ideas={ideas} onTaskClick={openPanel} />
         )}
       </div>
 

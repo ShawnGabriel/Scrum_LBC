@@ -26,8 +26,8 @@ export async function GET(
             statusTransitions: { orderBy: { changedAt: "desc" } },
           },
         },
-        creator: { select: { id: true, name: true, email: true, avatarUrl: true } },
-        assignee: { select: { id: true, name: true, email: true, avatarUrl: true } },
+        creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
       },
     });
 
@@ -88,8 +88,8 @@ export async function PATCH(
         data: updateData,
         include: {
           tasks: { orderBy: { order: "asc" } },
-          creator: { select: { id: true, name: true, email: true, avatarUrl: true } },
-          assignee: { select: { id: true, name: true, email: true, avatarUrl: true } },
+          creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
+          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },
       });
 

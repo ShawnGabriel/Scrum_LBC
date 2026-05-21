@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 
-export type ViewType = "table" | "kanban";
+export type ViewType = "table" | "kanban" | "roadmap";
 
 const STORAGE_KEY = "scrum-lbc-view";
 
@@ -11,7 +11,7 @@ export function useViewPreference(): [ViewType, (v: ViewType) => void] {
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "kanban" || stored === "table") {
+    if (stored === "kanban" || stored === "table" || stored === "roadmap") {
       setViewState(stored);
     }
   }, []);

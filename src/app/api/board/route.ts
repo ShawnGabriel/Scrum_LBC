@@ -9,12 +9,12 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const employees = await prisma.user.findMany({
-      where: { role: "EMPLOYEE" },
+    const associates = await prisma.user.findMany({
+      where: { role: "ASSOCIATE" },
       select: {
         id: true,
         name: true,
-        email: true,
+        username: true,
         avatarUrl: true,
         assignedIdeas: {
           include: {
@@ -33,7 +33,7 @@ export async function GET() {
       orderBy: { name: "asc" },
     });
 
-    return NextResponse.json(employees);
+    return NextResponse.json(associates);
   } catch (error) {
     console.error("Failed to fetch board data:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

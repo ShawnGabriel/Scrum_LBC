@@ -10,8 +10,9 @@
 
   /* Sidebar */
   --color-sidebar: #070D1F;
-  --color-sidebar-hover: #11192E;
-  --color-sidebar-text: #8A95B5;
+  --color-sidebar-hover: #1C2647;
+  --color-sidebar-active-bg: #243366;
+  --color-sidebar-text: #B8C1DB;
   --color-sidebar-active: #7BB8FF;
 
   /* Primary / accent (cornflower) */

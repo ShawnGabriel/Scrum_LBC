@@ -44,10 +44,11 @@ export async function PATCH(
           { status: 403 }
         );
       }
-      // Employees can only transition WHITE -> YELLOW
-      if (task.status !== "WHITE" || status !== "YELLOW") {
+      // Associates can only toggle between WHITE and YELLOW
+      const allowed: TaskStatus[] = ["WHITE", "YELLOW"];
+      if (!allowed.includes(task.status) || !allowed.includes(status as TaskStatus)) {
         return NextResponse.json(
-          { error: "Employees can only change task status from WHITE to YELLOW" },
+          { error: "Associates can only toggle between Not Started and Working on it" },
           { status: 403 }
         );
       }

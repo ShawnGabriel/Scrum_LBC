@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { parsePrUrl } from "@/lib/pr-url";
 
 interface SubmitWorkDialogProps {
   taskId: string;
@@ -27,17 +28,17 @@ export function SubmitWorkDialog({
   onOpenChange,
   onSubmitted,
 }: SubmitWorkDialogProps) {
-  const [commitRef, setCommitRef] = useState("");
-  const [repoUrl, setRepoUrl] = useState("");
-  const [branch, setBranch] = useState("");
+  const [prUrl, setPrUrl] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  const parsed = useMemo(() => (prUrl.trim() ? parsePrUrl(prUrl) : null), [prUrl]);
+  const showInvalid = prUrl.trim().length > 0 && parsed === null;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    if (!commitRef.trim()) return;
+    if (!prUrl.trim() || !parsed) return;
 
     setLoading(true);
     try {
@@ -45,22 +46,22 @@ export function SubmitWorkDialog({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          commitRef: commitRef.trim(),
-          repoUrl: repoUrl.trim() || undefined,
-          branch: branch.trim() || undefined,
+          prUrl: prUrl.trim(),
           message: message.trim() || undefined,
         }),
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || "Submission failed");
       }
 
-      toast("Work submitted successfully!", "success");
-      setCommitRef("");
-      setRepoUrl("");
-      setBranch("");
+      if (data.warning) {
+        toast(data.warning, "info");
+      } else {
+        toast("Work submitted successfully!", "success");
+      }
+      setPrUrl("");
       setMessage("");
       onOpenChange(false);
       onSubmitted?.();
@@ -80,55 +81,46 @@ export function SubmitWorkDialog({
         <DialogHeader>
           <DialogTitle>Submit Work</DialogTitle>
           <DialogDescription>
-            Provide the commit reference and optional details for your submission.
+            Link the GitHub PR you opened for this task. The PR&apos;s state will
+            drive this task&apos;s status automatically — merging completes it.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="commitRef" className="text-sm font-medium text-foreground">
-              Commit Reference <span className="text-status-orange">*</span>
+            <label htmlFor="prUrl" className="text-sm font-medium text-foreground">
+              Pull Request URL <span className="text-status-orange">*</span>
             </label>
             <Input
-              id="commitRef"
-              placeholder="e.g. abc1234 or full SHA"
-              value={commitRef}
-              onChange={(e) => setCommitRef(e.target.value)}
+              id="prUrl"
+              placeholder="https://github.com/owner/repo/pull/123"
+              value={prUrl}
+              onChange={(e) => setPrUrl(e.target.value)}
               required
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
             />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="repoUrl" className="text-sm font-medium text-foreground">
-              Repository URL
-            </label>
-            <Input
-              id="repoUrl"
-              placeholder="https://github.com/org/repo"
-              value={repoUrl}
-              onChange={(e) => setRepoUrl(e.target.value)}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="branch" className="text-sm font-medium text-foreground">
-              Branch
-            </label>
-            <Input
-              id="branch"
-              placeholder="feature/my-branch"
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-            />
+            {parsed && (
+              <p className="text-[11px] font-mono text-status-green">
+                {parsed.owner}/{parsed.repo}#{parsed.number}
+              </p>
+            )}
+            {showInvalid && (
+              <p className="text-[11px] text-status-orange">
+                That doesn&apos;t look like a GitHub PR URL.
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="message" className="text-sm font-medium text-foreground">
-              Message
+              Notes (optional)
             </label>
             <Textarea
               id="message"
-              placeholder="Brief description of changes..."
+              placeholder="Anything reviewers should know…"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
@@ -144,7 +136,7 @@ export function SubmitWorkDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || !commitRef.trim()}>
+            <Button type="submit" disabled={loading || !parsed}>
               {loading ? "Submitting..." : "Submit"}
             </Button>
           </DialogFooter>

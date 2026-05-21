@@ -9,6 +9,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { StatusPill } from "@/components/board/StatusPill";
 import { SubmitWorkDialog } from "@/components/tasks/SubmitWorkDialog";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
+import { PRBadge } from "@/components/tasks/PRBadge";
 import { formatRelativeTime } from "@/lib/utils";
 import type { TaskStatus } from "@/generated/prisma/client";
 
@@ -33,6 +34,10 @@ interface DetailPanelContentProps {
       repoUrl: string | null;
       branch: string | null;
       message: string | null;
+      prUrl: string | null;
+      prNumber: number | null;
+      prState: string | null;
+      prMerged: boolean;
       createdAt: string;
       user: { id: string; name: string };
     }[];
@@ -128,6 +133,7 @@ export function DetailPanelContent({
             taskId={task.id}
             status={task.status}
             canEdit={isCTO || isAssignee}
+            userRole={userRole}
             onStatusChange={handleStatusChange}
           />
         </div>
@@ -218,7 +224,15 @@ export function DetailPanelContent({
               <div key={sub.id} className="flex items-start gap-3">
                 <GitCommit className="mt-0.5 h-3.5 w-3.5 shrink-0 text-status-green" />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {sub.prUrl && sub.prNumber != null && (
+                      <PRBadge
+                        prUrl={sub.prUrl}
+                        prNumber={sub.prNumber}
+                        prState={sub.prState}
+                        prMerged={sub.prMerged}
+                      />
+                    )}
                     <code className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 text-[10px] text-primary">
                       {sub.commitRef.slice(0, 8)}
                     </code>

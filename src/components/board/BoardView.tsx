@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { BoardUser } from "@/types";
 import type { TaskStatus } from "@/generated/prisma/client";
-import { EmployeeCard } from "./EmployeeCard";
+import { AssociateCard } from "./AssociateCard";
 
 interface BoardViewProps {
   users: BoardUser[];
@@ -42,7 +42,7 @@ export function BoardView({ users, currentUserId }: BoardViewProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {users.map((user) => (
-        <EmployeeCard
+        <AssociateCard
           key={user.id}
           user={user}
           currentUserId={currentUserId}

@@ -12,7 +12,7 @@ import { formatRelativeTime } from "@/lib/utils";
 
 type ReviewTask = Task & {
   idea: Idea & {
-    assignee: { id: string; name: string; email: string; avatarUrl: string | null } | null;
+    assignee: { id: string; name: string; username: string; avatarUrl: string | null } | null;
   };
   submissions: Submission[];
 };

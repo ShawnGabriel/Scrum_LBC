@@ -16,7 +16,7 @@ export default async function ReviewPage() {
     include: {
       idea: {
         include: {
-          assignee: { select: { id: true, name: true, email: true, avatarUrl: true } },
+          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },
       },
       submissions: { orderBy: { createdAt: "asc" } },

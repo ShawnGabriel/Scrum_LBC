@@ -17,20 +17,18 @@ export default async function DashboardLayout({
 
   const user = session.user as { id: string; name?: string | null; role: string };
   const userName = user.name ?? "User";
-  const userRole = user.role ?? "EMPLOYEE";
+  const userRole = user.role ?? "ASSOCIATE";
 
   return (
     <Providers>
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar userRole={userRole} userName={userName} />
+      <Sidebar userRole={userRole} userName={userName} />
 
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <Header userName={userName} userRole={userRole} />
+      <div className="flex h-screen flex-col overflow-hidden">
+        <Header userName={userName} userRole={userRole} />
 
-          <main className="flex-1 overflow-y-auto bg-background p-5">
-            {children}
-          </main>
-        </div>
+        <main className="flex-1 overflow-y-auto bg-background p-5">
+          {children}
+        </main>
       </div>
     </Providers>
   );

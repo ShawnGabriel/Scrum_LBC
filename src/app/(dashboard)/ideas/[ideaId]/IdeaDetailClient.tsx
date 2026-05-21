@@ -108,7 +108,7 @@ export function IdeaDetailClient({ tasks, isOwner, isCTO }: IdeaDetailClientProp
               </div>
             )}
 
-            {/* YELLOW tasks - employee can submit */}
+            {/* YELLOW tasks - associate can submit */}
             {isOwner && task.status === "YELLOW" && (
               <div className="ml-4">
                 <Button

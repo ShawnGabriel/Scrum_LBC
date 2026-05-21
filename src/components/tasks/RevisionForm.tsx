@@ -97,7 +97,7 @@ export function RevisionForm({
         <DialogHeader>
           <DialogTitle>Request Revisions</DialogTitle>
           <DialogDescription>
-            Create revision subtasks for the employee to address.
+            Create revision subtasks for the associate to address.
           </DialogDescription>
         </DialogHeader>
 
@@ -130,7 +130,7 @@ export function RevisionForm({
               />
 
               <Textarea
-                placeholder="Notes for the employee..."
+                placeholder="Notes for the associate..."
                 value={rev.note}
                 onChange={(e) => updateRevision(index, "note", e.target.value)}
                 rows={2}

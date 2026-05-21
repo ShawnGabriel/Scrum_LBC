@@ -6,19 +6,19 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { TaskPill } from "./TaskPill";
 import { User as UserIcon } from "lucide-react";
 
-interface EmployeeCardProps {
+interface AssociateCardProps {
   user: BoardUser;
   currentUserId: string;
   onStatusChange?: (taskId: string, newStatus: TaskStatus) => void;
   onSubmit?: (taskId: string) => void;
 }
 
-export function EmployeeCard({
+export function AssociateCard({
   user,
   currentUserId,
   onStatusChange,
   onSubmit,
-}: EmployeeCardProps) {
+}: AssociateCardProps) {
   const isOwner = user.id === currentUserId;
   const assignedIdea = user.assignedIdeas[0] ?? null;
 

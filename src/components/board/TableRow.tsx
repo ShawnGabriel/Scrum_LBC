@@ -2,6 +2,7 @@
 
 import type { Task, Submission, TaskStatus } from "@/generated/prisma/client";
 import { StatusPill } from "./StatusPill";
+import { RevisionsTooltip } from "./RevisionsTooltip";
 import { Avatar } from "@/components/ui/avatar";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -41,9 +42,7 @@ export function TableRow({
           {task.title}
         </span>
         {task.revisionTasks.length > 0 && (
-          <span className="shrink-0 rounded-sm border border-status-orange/30 bg-status-orange/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-status-orange">
-            {task.revisionTasks.length} revision{task.revisionTasks.length > 1 ? "s" : ""}
-          </span>
+          <RevisionsTooltip revisionTasks={task.revisionTasks} />
         )}
       </div>
 
@@ -53,6 +52,7 @@ export function TableRow({
           taskId={task.id}
           status={task.status}
           canEdit={canEdit}
+          userRole={userRole}
           onStatusChange={onStatusChange}
         />
       </div>

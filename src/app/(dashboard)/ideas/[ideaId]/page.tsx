@@ -38,8 +38,8 @@ export default async function IdeaDetailPage({
   const idea = await prisma.idea.findUnique({
     where: { id: ideaId },
     include: {
-      creator: { select: { id: true, name: true, email: true, avatarUrl: true } },
-      assignee: { select: { id: true, name: true, email: true, avatarUrl: true } },
+      creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
+      assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
       tasks: {
         orderBy: { order: "asc" },
         include: {

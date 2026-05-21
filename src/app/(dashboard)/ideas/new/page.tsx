@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 
-interface Employee {
+interface Associate {
   id: string;
   name: string;
-  email: string;
+  username: string;
 }
 
 interface TaskRow {
@@ -27,31 +27,31 @@ export default function NewIdeaPage() {
   const [description, setDescription] = useState("");
   const [assignedToId, setAssignedToId] = useState("");
   const [tasks, setTasks] = useState<TaskRow[]>([{ title: "", description: "" }]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [associates, setAssociates] = useState<Associate[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const [loadingAssociates, setLoadingAssociates] = useState(true);
 
   useEffect(() => {
-    async function fetchEmployees() {
+    async function fetchAssociates() {
       try {
         const res = await fetch("/api/board");
         if (res.ok) {
           const data = await res.json();
-          setEmployees(
-            data.map((u: { id: string; name: string; email: string }) => ({
+          setAssociates(
+            data.map((u: { id: string; name: string; username: string }) => ({
               id: u.id,
               name: u.name,
-              email: u.email,
+              username: u.username,
             }))
           );
         }
       } catch {
         // silently fail
       } finally {
-        setLoadingEmployees(false);
+        setLoadingAssociates(false);
       }
     }
-    fetchEmployees();
+    fetchAssociates();
   }, []);
 
   function addTask() {
@@ -149,8 +149,8 @@ export default function NewIdeaPage() {
             <label htmlFor="assignee" className="text-sm font-medium text-foreground">
               Assign To
             </label>
-            {loadingEmployees ? (
-              <p className="text-sm text-label">Loading employees...</p>
+            {loadingAssociates ? (
+              <p className="text-sm text-label">Loading associates...</p>
             ) : (
               <select
                 id="assignee"
@@ -159,9 +159,9 @@ export default function NewIdeaPage() {
                 className="h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 <option value="">Unassigned</option>
-                {employees.map((emp) => (
+                {associates.map((emp) => (
                   <option key={emp.id} value={emp.id}>
-                    {emp.name} ({emp.email})
+                    {emp.name} (@{emp.username})
                   </option>
                 ))}
               </select>

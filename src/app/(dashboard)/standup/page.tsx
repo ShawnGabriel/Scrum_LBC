@@ -29,8 +29,8 @@ export default async function StandupPage() {
   yesterday.setDate(yesterday.getDate() - 1);
   yesterday.setHours(0, 0, 0, 0);
 
-  const employees = await prisma.user.findMany({
-    where: { role: "EMPLOYEE" },
+  const associates = await prisma.user.findMany({
+    where: { role: "ASSOCIATE" },
     include: {
       assignedIdeas: {
         include: {
@@ -58,8 +58,8 @@ export default async function StandupPage() {
       </div>
 
       <div className="space-y-4">
-        {employees.map((employee) => {
-          const allTasks = employee.assignedIdeas.flatMap((idea) => idea.tasks);
+        {associates.map((associate) => {
+          const allTasks = associate.assignedIdeas.flatMap((idea) => idea.tasks);
           const changedTasks = allTasks.filter(
             (task) => task.statusTransitions.length > 0
           );
@@ -71,22 +71,22 @@ export default async function StandupPage() {
 
           return (
             <div
-              key={employee.id}
+              key={associate.id}
               className="rounded-lg border border-border bg-surface p-4 space-y-3"
             >
               <div className="flex items-center gap-3">
-                {employee.avatarUrl ? (
+                {associate.avatarUrl ? (
                   <img
-                    src={employee.avatarUrl}
-                    alt={employee.name}
+                    src={associate.avatarUrl}
+                    alt={associate.name}
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
-                    {employee.name.charAt(0).toUpperCase()}
+                    {associate.name.charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span className="font-medium text-foreground">{employee.name}</span>
+                <span className="font-medium text-foreground">{associate.name}</span>
               </div>
 
               {!hasActivity ? (

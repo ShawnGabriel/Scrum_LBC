@@ -9,68 +9,70 @@ async function main() {
 
   console.log("Seeding database...");
 
-  const adminHash = await bcrypt.hash("admin123", 12);
-  const userHash = await bcrypt.hash("password123", 12);
+  const ctos: { username: string; name: string; password: string }[] = [
+    { username: "narin", name: "Narin", password: "narin678" },
+    { username: "shawn", name: "Shawn", password: "shawn678" },
+  ];
 
-  const cto = await prisma.user.upsert({
-    where: { email: "cto@lbc.com" },
-    update: {},
-    create: {
-      email: "cto@lbc.com",
-      name: "Chief Officer",
-      passwordHash: adminHash,
-      role: "CTO",
-    },
-  });
-  console.log(`Created CTO: ${cto.name} (${cto.email})`);
+  const associates: { username: string; name: string }[] = [
+    { username: "atala", name: "Atala" },
+    { username: "akbar", name: "Akbar" },
+    { username: "fadlan", name: "Fadlan" },
+    { username: "arkan", name: "Arkan" },
+    { username: "jonathan", name: "Jo" },
+    { username: "el", name: "El" },
+  ];
 
-  const alice = await prisma.user.upsert({
-    where: { email: "alice@lbc.com" },
-    update: {},
-    create: {
-      email: "alice@lbc.com",
-      name: "Alice Johnson",
-      passwordHash: userHash,
-      role: "EMPLOYEE",
-    },
-  });
+  const ctoRecords = [];
+  for (const c of ctos) {
+    const hash = await bcrypt.hash(c.password, 12);
+    const user = await prisma.user.upsert({
+      where: { username: c.username },
+      update: {},
+      create: {
+        username: c.username,
+        name: c.name,
+        passwordHash: hash,
+        role: "CTO",
+      },
+    });
+    ctoRecords.push(user);
+    console.log(`Created CTO: ${user.name} (${user.username})`);
+  }
 
-  const bob = await prisma.user.upsert({
-    where: { email: "bob@lbc.com" },
-    update: {},
-    create: {
-      email: "bob@lbc.com",
-      name: "Bob Smith",
-      passwordHash: userHash,
-      role: "EMPLOYEE",
-    },
-  });
-
-  const carol = await prisma.user.upsert({
-    where: { email: "carol@lbc.com" },
-    update: {},
-    create: {
-      email: "carol@lbc.com",
-      name: "Carol Williams",
-      passwordHash: userHash,
-      role: "EMPLOYEE",
-    },
-  });
-
-  console.log(`Created employees: ${alice.name}, ${bob.name}, ${carol.name}`);
+  const associateRecords = [];
+  for (const a of associates) {
+    const hash = await bcrypt.hash(`${a.username}123`, 12);
+    const user = await prisma.user.upsert({
+      where: { username: a.username },
+      update: {},
+      create: {
+        username: a.username,
+        name: a.name,
+        passwordHash: hash,
+        role: "ASSOCIATE",
+      },
+    });
+    associateRecords.push(user);
+    console.log(`Created associate: ${user.name} (${user.username})`);
+  }
 
   const existingIdeas = await prisma.idea.count();
   if (existingIdeas === 0) {
+    const primaryCto = ctoRecords[0];
+    const atala = associateRecords.find((u) => u.username === "atala")!;
+    const akbar = associateRecords.find((u) => u.username === "akbar")!;
+
     const idea1 = await prisma.idea.create({
       data: {
         title: "User Authentication Flow",
         description: "Implement a complete user authentication flow including login, registration, and password reset.",
         status: "IN_PROGRESS",
-        createdById: cto.id,
-        assignedToId: alice.id,
+        createdById: primaryCto.id,
+        assignedToId: atala.id,
         tasks: {
           create: [
-            { title: "Design login page UI", description: "Create the login page with email and password fields.", status: "GREEN", order: 0 },
+            { title: "Design login page UI", description: "Create the login page with username and password fields.", status: "GREEN", order: 0 },
             { title: "Implement auth API endpoints", description: "Build the REST API endpoints for login, register, and password reset.", status: "YELLOW", order: 1 },
             { title: "Add session management", description: "Implement JWT-based session management with refresh tokens.", status: "WHITE", order: 2 },
           ],
@@ -84,8 +86,8 @@ async function main() {
         title: "Dashboard Analytics",
         description: "Build an analytics dashboard showing project metrics, task completion rates, and team performance.",
         status: "ASSIGNED",
-        createdById: cto.id,
-        assignedToId: bob.id,
+        createdById: primaryCto.id,
+        assignedToId: akbar.id,
         tasks: {
           create: [
             { title: "Design dashboard layout", description: "Create wireframes and implement the dashboard grid layout.", status: "YELLOW", order: 0 },

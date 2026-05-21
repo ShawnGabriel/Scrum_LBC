@@ -8,7 +8,7 @@ datasource db {
 }
 
 enum Role {
-  EMPLOYEE
+  ASSOCIATE
   CTO
 }
 
@@ -30,10 +30,10 @@ enum TaskStatus {
 
 model User {
   id            String        @id @default(cuid())
-  email         String        @unique
+  username      String        @unique
   name          String
   passwordHash  String
-  role          Role          @default(EMPLOYEE)
+  role          Role          @default(ASSOCIATE)
   avatarUrl     String?
   assignedIdeas Idea[]        @relation("AssignedIdeas")
   createdIdeas  Idea[]        @relation("CreatedIdeas")
@@ -78,16 +78,30 @@ model Task {
 }
 
 model Submission {
-  id        String   @id @default(cuid())
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId    String
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  commitRef String
-  repoUrl   String?
-  branch    String?
-  message   String?
-  createdAt DateTime @default(now())
+  id               String    @id @default(cuid())
+  task             Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId           String
+  user             User      @relation(fields: [userId], references: [id])
+  userId           String
+  commitRef        String
+  repoUrl          String?
+  branch           String?
+  message          String?
+
+  prUrl            String?
+  prOwner          String?
+  prRepo           String?
+  prNumber         Int?
+  prTitle          String?
+  prState          String?
+  prMerged         Boolean   @default(false)
+  prMergeCommitSha String?
+  prAuthorLogin    String?
+  lastSyncedAt     DateTime?
+
+  createdAt        DateTime  @default(now())
+
+  @@index([prOwner, prRepo, prNumber])
 }
 
 model ActivityLog {

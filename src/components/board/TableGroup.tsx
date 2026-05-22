@@ -69,19 +69,22 @@ export function TableGroup({
           {idea.title}
         </span>
         {idea.lead && (
-          <div className="flex items-center gap-1.5" title={`Lead: ${idea.lead.name}`}>
+          <div className="flex items-center gap-1.5">
             <span className="text-[9px] font-semibold uppercase tracking-wider text-label">
               Lead
             </span>
-            <Avatar name={idea.lead.name} size="xs" />
+            <AvatarChip name={idea.lead.name} label={`Lead: ${idea.lead.name}`} />
           </div>
         )}
         {uniqueAssignees.length > 0 && (
-          <div className="flex items-center -space-x-1.5" title="Team">
+          <div className="flex items-center -space-x-1.5">
             {uniqueAssignees.slice(0, 5).map((u) => (
-              <span key={u.id} className="ring-1 ring-surface rounded-full">
-                <Avatar name={u.name} size="xs" />
-              </span>
+              <AvatarChip
+                key={u.id}
+                name={u.name}
+                label={u.name}
+                className="ring-1 ring-surface hover:z-10"
+              />
             ))}
             {uniqueAssignees.length > 5 && (
               <span className="ml-2 text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -131,5 +134,22 @@ export function TableGroup({
         </>
       )}
     </div>
+  );
+}
+
+interface AvatarChipProps {
+  name: string;
+  label: string;
+  className?: string;
+}
+
+function AvatarChip({ name, label, className }: AvatarChipProps) {
+  return (
+    <span className="group relative inline-flex">
+      <Avatar name={name} size="xs" className={className} />
+      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-sm border border-border bg-surface-elevated px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-foreground opacity-0 shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition-opacity duration-150 group-hover:opacity-100">
+        {label}
+      </span>
+    </span>
   );
 }

@@ -53,6 +53,7 @@ model Idea {
   createdById  String
   lead         User?         @relation("IdeaLead", fields: [leadId], references: [id])
   leadId       String?
+  dueDate      DateTime?
   tasks        Task[]
   activityLogs ActivityLog[]
   createdAt    DateTime      @default(now())
@@ -76,6 +77,8 @@ model Task {
   statusTransitions StatusTransition[]
   isRevision        Boolean            @default(false)
   revisionNote      String?
+  startDate         DateTime?
+  dueDate           DateTime?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 }

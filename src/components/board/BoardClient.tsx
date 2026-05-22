@@ -66,7 +66,7 @@ export function BoardClient({ ideas, currentUserId, userRole }: BoardClientProps
           />
         )}
         {view === "roadmap" && (
-          <RoadmapView ideas={ideas} onTaskClick={openPanel} />
+          <RoadmapView ideas={ideas} userRole={userRole} onTaskClick={openPanel} />
         )}
       </div>
 

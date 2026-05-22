@@ -18,6 +18,7 @@ interface TaskRow {
   title: string;
   description: string;
   assignedToId: string;
+  dueDate: string;
 }
 
 export default function NewIdeaPage() {
@@ -27,8 +28,9 @@ export default function NewIdeaPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [leadId, setLeadId] = useState("");
+  const [ideaDueDate, setIdeaDueDate] = useState("");
   const [tasks, setTasks] = useState<TaskRow[]>([
-    { title: "", description: "", assignedToId: "" },
+    { title: "", description: "", assignedToId: "", dueDate: "" },
   ]);
   const [associates, setAssociates] = useState<Associate[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ export default function NewIdeaPage() {
   function addTask() {
     setTasks((prev) => [
       ...prev,
-      { title: "", description: "", assignedToId: "" },
+      { title: "", description: "", assignedToId: "", dueDate: "" },
     ]);
   }
 
@@ -92,11 +94,13 @@ export default function NewIdeaPage() {
           title: title.trim(),
           description: description.trim(),
           leadId: leadId || undefined,
+          dueDate: ideaDueDate || undefined,
           tasks: validTasks.map((t, i) => ({
             title: t.title.trim(),
             description: t.description.trim() || undefined,
             order: i,
             assignedToId: t.assignedToId || undefined,
+            dueDate: t.dueDate || undefined,
           })),
         }),
       });
@@ -149,6 +153,18 @@ export default function NewIdeaPage() {
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               required
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="ideaDueDate" className="text-sm font-medium text-foreground">
+              Idea Due Date <span className="text-label">(optional)</span>
+            </label>
+            <Input
+              id="ideaDueDate"
+              type="date"
+              value={ideaDueDate}
+              onChange={(e) => setIdeaDueDate(e.target.value)}
             />
           </div>
 
@@ -215,19 +231,28 @@ export default function NewIdeaPage() {
                 onChange={(e) => updateTask(index, "description", e.target.value)}
                 rows={2}
               />
-              <select
-                value={task.assignedToId}
-                onChange={(e) => updateTask(index, "assignedToId", e.target.value)}
-                className="h-9 rounded-md border border-border bg-surface px-3 text-[12px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                disabled={loadingAssociates}
-              >
-                <option value="">Unassigned</option>
-                {associates.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    Assign to {emp.name} (@{emp.username})
-                  </option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  value={task.assignedToId}
+                  onChange={(e) => updateTask(index, "assignedToId", e.target.value)}
+                  className="h-9 flex-1 rounded-md border border-border bg-surface px-3 text-[12px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  disabled={loadingAssociates}
+                >
+                  <option value="">Unassigned</option>
+                  {associates.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      Assign to {emp.name} (@{emp.username})
+                    </option>
+                  ))}
+                </select>
+                <Input
+                  type="date"
+                  value={task.dueDate}
+                  onChange={(e) => updateTask(index, "dueDate", e.target.value)}
+                  className="h-9 w-44 text-[12px]"
+                  title="Due date"
+                />
+              </div>
             </div>
           ))}
 

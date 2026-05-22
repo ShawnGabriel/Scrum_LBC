@@ -22,6 +22,8 @@ interface DetailPanelContentProps {
     isRevision: boolean;
     revisionNote: string | null;
     createdAt: string;
+    startDate: string | null;
+    dueDate: string | null;
     assignedToId: string | null;
     assignee: { id: string; name: string; username: string } | null;
     idea: {
@@ -185,6 +187,14 @@ export function DetailPanelContent({
                   {task.idea.lead.name}
                 </span>
               </div>
+            </div>
+          )}
+          {task.dueDate && (
+            <div className="flex items-center gap-2">
+              <span className="w-20 text-[10px] uppercase tracking-wider text-label">Due</span>
+              <span className="text-[11px] uppercase tracking-wider text-foreground">
+                {new Date(task.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </span>
             </div>
           )}
           <div className="flex items-center gap-2">

@@ -43,6 +43,7 @@ interface TaskInput {
   description?: string;
   order?: number;
   assignedToId?: string;
+  dueDate?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -58,10 +59,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, leadId, tasks } = body as {
+    const { title, description, leadId, dueDate, tasks } = body as {
       title?: string;
       description?: string;
       leadId?: string;
+      dueDate?: string;
       tasks?: TaskInput[];
     };
 
@@ -81,6 +83,7 @@ export async function POST(request: NextRequest) {
           description,
           createdById: session.user!.id,
           leadId: leadId || null,
+          dueDate: dueDate ? new Date(dueDate) : null,
           status: anyAssigned ? "IN_PROGRESS" : "DRAFT",
           tasks: {
             create: tasks.map((t) => ({
@@ -88,6 +91,7 @@ export async function POST(request: NextRequest) {
               description: t.description || null,
               order: t.order ?? 0,
               assignedToId: t.assignedToId || null,
+              dueDate: t.dueDate ? new Date(t.dueDate) : null,
             })),
           },
         },

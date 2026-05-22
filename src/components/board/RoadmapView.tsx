@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react";
 import type { Idea, Task, Submission, User, TaskStatus } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ type IdeaWithRelations = Idea & {
 
 interface RoadmapViewProps {
   ideas: IdeaWithRelations[];
+  userRole: string;
   onTaskClick: (taskId: string) => void;
 }
 
@@ -52,17 +54,42 @@ function endOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth() + 1, 0);
 }
 
+function startOfDay(ms: number) {
+  const d = new Date(ms);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
 function taskRange(task: TaskWithRelations): { startMs: number; endMs: number } {
-  const startMs = new Date(task.createdAt).getTime();
-  const endMs =
-    task.status === "COMPLETED"
+  const startMs = task.startDate
+    ? new Date(task.startDate).getTime()
+    : new Date(task.createdAt).getTime();
+  const endMs = task.dueDate
+    ? new Date(task.dueDate).getTime() + MS_PER_DAY - 1 // dueDate is inclusive end of day
+    : task.status === "COMPLETED"
       ? new Date(task.updatedAt).getTime()
       : Date.now();
   return { startMs, endMs: Math.max(endMs, startMs + MS_PER_DAY) };
 }
 
-export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
+type DragState =
+  | {
+      kind: "move" | "resize";
+      taskId: string;
+      pointerStartX: number;
+      initialStartMs: number;
+      initialEndMs: number;
+      deltaDays: number;
+    }
+  | null;
+
+export function RoadmapView({ ideas, userRole, onTaskClick }: RoadmapViewProps) {
+  const router = useRouter();
+  const isCTO = userRole === "CTO";
   const [anchor, setAnchor] = useState(() => startOfMonth(new Date()));
+  const [drag, setDrag] = useState<DragState>(null);
+  const dragRef = useRef<DragState>(null);
+  dragRef.current = drag;
 
   const monthStart = anchor;
   const monthEnd = endOfMonth(anchor);
@@ -90,6 +117,51 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
     return result;
   }, [ideas]);
 
+  useEffect(() => {
+    if (!drag) return;
+    function onMove(e: PointerEvent) {
+      const d = dragRef.current;
+      if (!d) return;
+      const dx = e.clientX - d.pointerStartX;
+      const deltaDays = Math.round(dx / DAY_WIDTH);
+      if (deltaDays !== d.deltaDays) {
+        setDrag({ ...d, deltaDays });
+      }
+    }
+    async function onUp() {
+      const d = dragRef.current;
+      setDrag(null);
+      if (!d || d.deltaDays === 0) return;
+      const dayMs = MS_PER_DAY;
+      const newStartMs =
+        d.kind === "move" ? d.initialStartMs + d.deltaDays * dayMs : d.initialStartMs;
+      const newDueDayMs = startOfDay(d.initialEndMs) + d.deltaDays * dayMs;
+      // resize and move both shift the dueDate; move also shifts the startDate.
+      const body: Record<string, string | null> = {
+        dueDate: new Date(newDueDayMs).toISOString(),
+      };
+      if (d.kind === "move") {
+        body.startDate = new Date(newStartMs).toISOString();
+      }
+      try {
+        await fetch(`/api/tasks/${d.taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        router.refresh();
+      } catch (err) {
+        console.error("Failed to update task schedule:", err);
+      }
+    }
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [drag, router]);
+
   if (ideas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -108,15 +180,30 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
 
   function computeBar(task: TaskWithRelations) {
     const { startMs, endMs } = taskRange(task);
-    const entirelyBefore = endMs < windowStartMs;
-    const entirelyAfter = startMs > windowEndMs;
+    let effectiveStart = startMs;
+    let effectiveEnd = endMs;
+    if (drag && drag.taskId === task.id && drag.deltaDays !== 0) {
+      const shift = drag.deltaDays * MS_PER_DAY;
+      if (drag.kind === "move") {
+        effectiveStart = drag.initialStartMs + shift;
+        effectiveEnd = drag.initialEndMs + shift;
+      } else {
+        effectiveEnd = drag.initialEndMs + shift;
+        if (effectiveEnd < effectiveStart + MS_PER_DAY) {
+          effectiveEnd = effectiveStart + MS_PER_DAY;
+        }
+      }
+    }
+
+    const entirelyBefore = effectiveEnd < windowStartMs;
+    const entirelyAfter = effectiveStart > windowEndMs;
 
     if (entirelyBefore || entirelyAfter) {
       return { visible: false as const, before: entirelyBefore, after: entirelyAfter };
     }
 
-    const clampedStart = Math.max(startMs, windowStartMs);
-    const clampedEnd = Math.min(endMs, windowEndMs);
+    const clampedStart = Math.max(effectiveStart, windowStartMs);
+    const clampedEnd = Math.min(effectiveEnd, windowEndMs);
     const startDay = Math.floor((clampedStart - windowStartMs) / MS_PER_DAY);
     const endDay = Math.ceil((clampedEnd - windowStartMs) / MS_PER_DAY);
     const widthDays = Math.max(1, endDay - startDay);
@@ -125,8 +212,8 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
       visible: true as const,
       left: startDay * DAY_WIDTH,
       width: widthDays * DAY_WIDTH,
-      overflowLeft: startMs < windowStartMs,
-      overflowRight: endMs > windowEndMs,
+      overflowLeft: effectiveStart < windowStartMs,
+      overflowRight: effectiveEnd > windowEndMs,
     };
   }
 
@@ -149,33 +236,55 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
     setAnchor(startOfMonth(new Date()));
   }
 
+  function beginDrag(kind: "move" | "resize", task: TaskWithRelations, e: React.PointerEvent) {
+    if (!isCTO) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const { startMs, endMs } = taskRange(task);
+    setDrag({
+      kind,
+      taskId: task.id,
+      pointerStartX: e.clientX,
+      initialStartMs: startMs,
+      initialEndMs: endMs,
+      deltaDays: 0,
+    });
+  }
+
   return (
     <div className="overflow-hidden rounded-sm border border-border bg-surface">
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
         <p className="text-[11px] uppercase tracking-wider text-foreground">
           {monthLabel}
         </p>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={goToday}
-            className="rounded-sm border border-border bg-surface-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
-          >
-            Today
-          </button>
-          <button
-            onClick={goPrev}
-            aria-label="Previous month"
-            className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={goNext}
-            aria-label="Next month"
-            className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
-          >
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
+        <div className="flex items-center gap-2">
+          {isCTO && (
+            <span className="hidden text-[10px] uppercase tracking-wider text-label sm:inline">
+              Drag bars to reschedule
+            </span>
+          )}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={goToday}
+              className="rounded-sm border border-border bg-surface-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+            >
+              Today
+            </button>
+            <button
+              onClick={goPrev}
+              aria-label="Previous month"
+              className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={goNext}
+              aria-label="Next month"
+              className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -283,6 +392,7 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
               }
 
               const bar = computeBar(row.task);
+              const isDragging = drag?.taskId === row.task.id;
               return (
                 <div
                   key={`grid-task-${row.task.id}`}
@@ -298,11 +408,18 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
                   ))}
 
                   {bar.visible ? (
-                    <button
-                      onClick={() => onTaskClick(row.task.id)}
+                    <div
+                      onPointerDown={(e) => isCTO && beginDrag("move", row.task, e)}
+                      onClick={(e) => {
+                        if (drag) return;
+                        e.preventDefault();
+                        onTaskClick(row.task.id);
+                      }}
                       className={cn(
-                        "absolute top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-sm border px-2 text-[10px] font-medium uppercase tracking-wider transition-all hover:brightness-125",
-                        STATUS_BAR_CLASS[row.task.status]
+                        "absolute top-1/2 flex -translate-y-1/2 select-none items-center gap-1 rounded-sm border px-2 text-[10px] font-medium uppercase tracking-wider transition-shadow hover:brightness-125",
+                        STATUS_BAR_CLASS[row.task.status],
+                        isCTO ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
+                        isDragging && "shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
                       )}
                       style={{
                         left: bar.left,
@@ -313,13 +430,21 @@ export function RoadmapView({ ideas, onTaskClick }: RoadmapViewProps) {
                       {bar.overflowLeft && (
                         <ArrowLeft className="h-2.5 w-2.5 shrink-0" />
                       )}
-                      <span className="flex-1 truncate text-left">
+                      <span className="flex-1 truncate text-left pointer-events-none">
                         {row.task.title}
                       </span>
                       {bar.overflowRight && (
                         <ArrowRight className="h-2.5 w-2.5 shrink-0" />
                       )}
-                    </button>
+                      {isCTO && (
+                        <span
+                          onPointerDown={(e) => beginDrag("resize", row.task, e)}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label="Resize"
+                          className="absolute right-0 top-0 h-full w-2 cursor-ew-resize"
+                        />
+                      )}
+                    </div>
                   ) : (
                     <button
                       onClick={() => onTaskClick(row.task.id)}

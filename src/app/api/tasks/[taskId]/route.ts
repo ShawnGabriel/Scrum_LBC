@@ -16,14 +16,21 @@ export async function PATCH(
 
     const { taskId } = await params;
     const body = await request.json();
-    const { status, assignedToId } = body as {
+    const { status, assignedToId, startDate, dueDate } = body as {
       status?: TaskStatus;
       assignedToId?: string | null;
+      startDate?: string | null;
+      dueDate?: string | null;
     };
 
-    if (status === undefined && assignedToId === undefined) {
+    if (
+      status === undefined &&
+      assignedToId === undefined &&
+      startDate === undefined &&
+      dueDate === undefined
+    ) {
       return NextResponse.json(
-        { error: "status or assignedToId is required" },
+        { error: "Nothing to update" },
         { status: 400 }
       );
     }
@@ -42,10 +49,12 @@ export async function PATCH(
     const userRole = (session.user as { role: string }).role;
     const userId = session.user.id;
 
-    // assignedToId can only be changed by CTOs
-    if (assignedToId !== undefined && !isCTO(userRole)) {
+    // assignedToId, startDate, and dueDate can only be changed by CTOs
+    const ctoOnly =
+      assignedToId !== undefined || startDate !== undefined || dueDate !== undefined;
+    if (ctoOnly && !isCTO(userRole)) {
       return NextResponse.json(
-        { error: "Only CTOs can reassign tasks" },
+        { error: "Only CTOs can change assignment or schedule" },
         { status: 403 }
       );
     }
@@ -69,6 +78,8 @@ export async function PATCH(
     const updates: Record<string, unknown> = {};
     if (status !== undefined) updates.status = status;
     if (assignedToId !== undefined) updates.assignedToId = assignedToId || null;
+    if (startDate !== undefined) updates.startDate = startDate ? new Date(startDate) : null;
+    if (dueDate !== undefined) updates.dueDate = dueDate ? new Date(dueDate) : null;
 
     const updatedTask = await prisma.$transaction(async (tx) => {
       const updated = await tx.task.update({

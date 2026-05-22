@@ -17,6 +17,7 @@ interface Associate {
 interface TaskRow {
   title: string;
   description: string;
+  assignedToId: string;
 }
 
 export default function NewIdeaPage() {
@@ -25,8 +26,10 @@ export default function NewIdeaPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [assignedToId, setAssignedToId] = useState("");
-  const [tasks, setTasks] = useState<TaskRow[]>([{ title: "", description: "" }]);
+  const [leadId, setLeadId] = useState("");
+  const [tasks, setTasks] = useState<TaskRow[]>([
+    { title: "", description: "", assignedToId: "" },
+  ]);
   const [associates, setAssociates] = useState<Associate[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingAssociates, setLoadingAssociates] = useState(true);
@@ -55,7 +58,10 @@ export default function NewIdeaPage() {
   }, []);
 
   function addTask() {
-    setTasks((prev) => [...prev, { title: "", description: "" }]);
+    setTasks((prev) => [
+      ...prev,
+      { title: "", description: "", assignedToId: "" },
+    ]);
   }
 
   function removeTask(index: number) {
@@ -85,11 +91,12 @@ export default function NewIdeaPage() {
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim(),
-          assignedToId: assignedToId || undefined,
+          leadId: leadId || undefined,
           tasks: validTasks.map((t, i) => ({
             title: t.title.trim(),
             description: t.description.trim() || undefined,
             order: i,
+            assignedToId: t.assignedToId || undefined,
           })),
         }),
       });
@@ -146,19 +153,22 @@ export default function NewIdeaPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="assignee" className="text-sm font-medium text-foreground">
-              Assign To
+            <label htmlFor="lead" className="text-sm font-medium text-foreground">
+              Lead <span className="text-label">(optional)</span>
             </label>
+            <p className="text-[11px] text-muted-foreground">
+              The person accountable for the whole idea. Individual task assignees are set per-task below.
+            </p>
             {loadingAssociates ? (
               <p className="text-sm text-label">Loading associates...</p>
             ) : (
               <select
-                id="assignee"
-                value={assignedToId}
-                onChange={(e) => setAssignedToId(e.target.value)}
+                id="lead"
+                value={leadId}
+                onChange={(e) => setLeadId(e.target.value)}
                 className="h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
-                <option value="">Unassigned</option>
+                <option value="">No lead</option>
                 {associates.map((emp) => (
                   <option key={emp.id} value={emp.id}>
                     {emp.name} (@{emp.username})
@@ -205,6 +215,19 @@ export default function NewIdeaPage() {
                 onChange={(e) => updateTask(index, "description", e.target.value)}
                 rows={2}
               />
+              <select
+                value={task.assignedToId}
+                onChange={(e) => updateTask(index, "assignedToId", e.target.value)}
+                className="h-9 rounded-md border border-border bg-surface px-3 text-[12px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                disabled={loadingAssociates}
+              >
+                <option value="">Unassigned</option>
+                {associates.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    Assign to {emp.name} (@{emp.username})
+                  </option>
+                ))}
+              </select>
             </div>
           ))}
 

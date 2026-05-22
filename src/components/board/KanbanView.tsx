@@ -22,11 +22,12 @@ type TaskWithRelations = Task & {
   submissions: Submission[];
   revisionTasks: Task[];
   statusTransitions: { changedAt: Date }[];
+  assignee: User | null;
 };
 
 type IdeaWithRelations = Idea & {
   tasks: TaskWithRelations[];
-  assignee: User | null;
+  lead: User | null;
 };
 
 interface FlatTask {
@@ -57,7 +58,7 @@ export function KanbanView({ ideas, currentUserId, userRole, onTaskClick }: Kanb
         title: task.title,
         status: task.status,
         ideaTitle: idea.title,
-        assigneeName: idea.assignee?.name ?? null,
+        assigneeName: task.assignee?.name ?? null,
         submissionCount: task.submissions.length,
       }))
     );

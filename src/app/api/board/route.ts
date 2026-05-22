@@ -16,19 +16,6 @@ export async function GET() {
         name: true,
         username: true,
         avatarUrl: true,
-        assignedIdeas: {
-          include: {
-            tasks: {
-              orderBy: { order: "asc" },
-              include: {
-                revisionTasks: { orderBy: { order: "asc" } },
-                submissions: { orderBy: { createdAt: "desc" } },
-                statusTransitions: { orderBy: { changedAt: "desc" } },
-              },
-            },
-          },
-          orderBy: { createdAt: "desc" },
-        },
       },
       orderBy: { name: "asc" },
     });

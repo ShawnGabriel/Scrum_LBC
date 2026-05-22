@@ -17,9 +17,10 @@ export async function GET(
     const task = await prisma.task.findUnique({
       where: { id: taskId },
       include: {
+        assignee: { select: { id: true, name: true, username: true } },
         idea: {
           include: {
-            assignee: { select: { id: true, name: true, username: true } },
+            lead: { select: { id: true, name: true, username: true } },
             creator: { select: { id: true, name: true, username: true } },
           },
         },

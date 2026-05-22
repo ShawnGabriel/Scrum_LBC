@@ -62,6 +62,8 @@ async function main() {
     const primaryCto = ctoRecords[0];
     const atala = associateRecords.find((u) => u.username === "atala")!;
     const akbar = associateRecords.find((u) => u.username === "akbar")!;
+    const fadlan = associateRecords.find((u) => u.username === "fadlan")!;
+    const arkan = associateRecords.find((u) => u.username === "arkan")!;
 
     const idea1 = await prisma.idea.create({
       data: {
@@ -69,12 +71,12 @@ async function main() {
         description: "Implement a complete user authentication flow including login, registration, and password reset.",
         status: "IN_PROGRESS",
         createdById: primaryCto.id,
-        assignedToId: atala.id,
+        leadId: atala.id,
         tasks: {
           create: [
-            { title: "Design login page UI", description: "Create the login page with username and password fields.", status: "GREEN", order: 0 },
-            { title: "Implement auth API endpoints", description: "Build the REST API endpoints for login, register, and password reset.", status: "YELLOW", order: 1 },
-            { title: "Add session management", description: "Implement JWT-based session management with refresh tokens.", status: "WHITE", order: 2 },
+            { title: "Design login page UI", description: "Create the login page with username and password fields.", status: "GREEN", order: 0, assignedToId: atala.id },
+            { title: "Implement auth API endpoints", description: "Build the REST API endpoints for login, register, and password reset.", status: "YELLOW", order: 1, assignedToId: atala.id },
+            { title: "Add session management", description: "Implement JWT-based session management with refresh tokens.", status: "WHITE", order: 2, assignedToId: fadlan.id },
           ],
         },
       },
@@ -85,14 +87,14 @@ async function main() {
       data: {
         title: "Dashboard Analytics",
         description: "Build an analytics dashboard showing project metrics, task completion rates, and team performance.",
-        status: "ASSIGNED",
+        status: "IN_PROGRESS",
         createdById: primaryCto.id,
-        assignedToId: akbar.id,
+        leadId: akbar.id,
         tasks: {
           create: [
-            { title: "Design dashboard layout", description: "Create wireframes and implement the dashboard grid layout.", status: "YELLOW", order: 0 },
-            { title: "Build chart components", description: "Implement reusable chart components for bar, line, and pie charts.", status: "WHITE", order: 1 },
-            { title: "Connect to data API", description: "Fetch analytics data from the backend and populate the charts.", status: "WHITE", order: 2 },
+            { title: "Design dashboard layout", description: "Create wireframes and implement the dashboard grid layout.", status: "YELLOW", order: 0, assignedToId: akbar.id },
+            { title: "Build chart components", description: "Implement reusable chart components for bar, line, and pie charts.", status: "WHITE", order: 1, assignedToId: akbar.id },
+            { title: "Connect to data API", description: "Fetch analytics data from the backend and populate the charts.", status: "WHITE", order: 2, assignedToId: arkan.id },
           ],
         },
       },

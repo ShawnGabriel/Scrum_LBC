@@ -32,15 +32,12 @@ export default async function StandupPage() {
   const associates = await prisma.user.findMany({
     where: { role: "ASSOCIATE" },
     include: {
-      assignedIdeas: {
+      assignedTasks: {
         include: {
-          tasks: {
-            include: {
-              statusTransitions: {
-                where: { changedAt: { gte: yesterday } },
-                orderBy: { changedAt: "desc" },
-              },
-            },
+          idea: { select: { id: true, title: true } },
+          statusTransitions: {
+            where: { changedAt: { gte: yesterday } },
+            orderBy: { changedAt: "desc" },
           },
         },
       },
@@ -59,7 +56,7 @@ export default async function StandupPage() {
 
       <div className="space-y-4">
         {associates.map((associate) => {
-          const allTasks = associate.assignedIdeas.flatMap((idea) => idea.tasks);
+          const allTasks = associate.assignedTasks;
           const changedTasks = allTasks.filter(
             (task) => task.statusTransitions.length > 0
           );

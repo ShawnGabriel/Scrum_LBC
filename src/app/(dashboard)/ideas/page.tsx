@@ -34,7 +34,12 @@ export default async function IdeasPage() {
     include: {
       _count: { select: { tasks: true } },
       creator: { select: { id: true, name: true } },
-      assignee: { select: { id: true, name: true } },
+      lead: { select: { id: true, name: true } },
+      tasks: {
+        select: {
+          assignee: { select: { id: true, name: true } },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -66,7 +71,7 @@ export default async function IdeasPage() {
                   Status
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Assigned To
+                  Team
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Tasks
@@ -93,7 +98,18 @@ export default async function IdeasPage() {
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {idea.assignee?.name ?? "Unassigned"}
+                    {(() => {
+                      const names = Array.from(
+                        new Set(
+                          idea.tasks
+                            .map((t) => t.assignee?.name)
+                            .filter((n): n is string => Boolean(n))
+                        )
+                      );
+                      if (names.length === 0) return "Unassigned";
+                      if (names.length <= 3) return names.join(", ");
+                      return `${names.slice(0, 3).join(", ")} +${names.length - 3}`;
+                    })()}
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
                     {idea._count.tasks}

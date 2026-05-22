@@ -14,11 +14,8 @@ export default async function ReviewPage() {
   const tasks = await prisma.task.findMany({
     where: { status: "GREEN" },
     include: {
-      idea: {
-        include: {
-          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
-        },
-      },
+      assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+      idea: { select: { id: true, title: true } },
       submissions: { orderBy: { createdAt: "asc" } },
     },
     orderBy: {

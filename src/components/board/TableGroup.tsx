@@ -12,10 +12,11 @@ type TaskWithRelations = Task & {
   submissions: Submission[];
   revisionTasks: Task[];
   statusTransitions: { changedAt: Date }[];
+  assignee: User | null;
 };
 
 interface TableGroupProps {
-  idea: Idea & { tasks: TaskWithRelations[]; assignee: User | null };
+  idea: Idea & { tasks: TaskWithRelations[]; lead: User | null };
   currentUserId: string;
   userRole: string;
   onTaskClick: (taskId: string) => void;
@@ -38,6 +39,16 @@ export function TableGroup({
   const urgentTask = idea.tasks.find((t) => t.status !== "COMPLETED") ?? idea.tasks[0];
   const accentColor = urgentTask ? getStatusColor(urgentTask.status) : "#6B7493";
 
+  // Unique assignees across this idea's tasks (excludes the lead if shown separately).
+  const uniqueAssignees = Array.from(
+    new Map(
+      idea.tasks
+        .map((t) => t.assignee)
+        .filter((a): a is User => Boolean(a))
+        .map((a) => [a.id, a])
+    ).values()
+  );
+
   return (
     <div className="mb-4 overflow-hidden rounded-sm border border-border bg-surface">
       {/* Group header */}
@@ -57,12 +68,26 @@ export function TableGroup({
         <span className="text-[12px] font-semibold uppercase tracking-wider text-foreground">
           {idea.title}
         </span>
-        {idea.assignee && (
-          <div className="flex items-center gap-1.5">
-            <Avatar name={idea.assignee.name} size="xs" />
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-              {idea.assignee.name}
+        {idea.lead && (
+          <div className="flex items-center gap-1.5" title={`Lead: ${idea.lead.name}`}>
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-label">
+              Lead
             </span>
+            <Avatar name={idea.lead.name} size="xs" />
+          </div>
+        )}
+        {uniqueAssignees.length > 0 && (
+          <div className="flex items-center -space-x-1.5" title="Team">
+            {uniqueAssignees.slice(0, 5).map((u) => (
+              <span key={u.id} className="ring-1 ring-surface rounded-full">
+                <Avatar name={u.name} size="xs" />
+              </span>
+            ))}
+            {uniqueAssignees.length > 5 && (
+              <span className="ml-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                +{uniqueAssignees.length - 5}
+              </span>
+            )}
           </div>
         )}
         <div className="ml-auto">
@@ -81,7 +106,7 @@ export function TableGroup({
               Status
             </div>
             <div className="w-[120px] border-l border-border py-1.5 text-center text-[10px] font-medium uppercase tracking-wider text-label">
-              Person
+              Assignee
             </div>
             <div className="w-[140px] border-l border-border py-1.5 text-center text-[10px] font-medium uppercase tracking-wider text-label">
               Last Commit
@@ -96,7 +121,7 @@ export function TableGroup({
             <TableRow
               key={task.id}
               task={task}
-              assigneeName={idea.assignee?.name ?? null}
+              assigneeName={task.assignee?.name ?? null}
               currentUserId={currentUserId}
               userRole={userRole}
               onTaskClick={onTaskClick}

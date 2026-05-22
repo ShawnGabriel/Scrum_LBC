@@ -13,14 +13,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const assignedTo = searchParams.get("assignedTo");
 
-    const where = assignedTo ? { assignedToId: assignedTo } : {};
+    // "assignedTo=<userId>" returns ideas where the user is assigned to at least one task.
+    const where = assignedTo
+      ? { tasks: { some: { assignedToId: assignedTo } } }
+      : {};
 
     const ideas = await prisma.idea.findMany({
       where,
       include: {
-        tasks: { orderBy: { order: "asc" } },
+        tasks: {
+          orderBy: { order: "asc" },
+          include: { assignee: { select: { id: true, name: true, username: true, avatarUrl: true } } },
+        },
         creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
-        assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        lead: { select: { id: true, name: true, username: true, avatarUrl: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -30,6 +36,13 @@ export async function GET(request: NextRequest) {
     console.error("Failed to fetch ideas:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+interface TaskInput {
+  title: string;
+  description?: string;
+  order?: number;
+  assignedToId?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -45,7 +58,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, assignedToId, tasks } = body;
+    const { title, description, leadId, tasks } = body as {
+      title?: string;
+      description?: string;
+      leadId?: string;
+      tasks?: TaskInput[];
+    };
 
     if (!title || !description || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
       return NextResponse.json(
@@ -54,26 +72,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const anyAssigned = tasks.some((t) => t.assignedToId);
+
     const idea = await prisma.$transaction(async (tx) => {
       const newIdea = await tx.idea.create({
         data: {
           title,
           description,
           createdById: session.user!.id,
-          assignedToId: assignedToId || null,
-          status: assignedToId ? "ASSIGNED" : "DRAFT",
+          leadId: leadId || null,
+          status: anyAssigned ? "IN_PROGRESS" : "DRAFT",
           tasks: {
-            create: tasks.map((t: { title: string; description?: string; order?: number }) => ({
+            create: tasks.map((t) => ({
               title: t.title,
               description: t.description || null,
               order: t.order ?? 0,
+              assignedToId: t.assignedToId || null,
             })),
           },
         },
         include: {
-          tasks: { orderBy: { order: "asc" } },
+          tasks: {
+            orderBy: { order: "asc" },
+            include: { assignee: { select: { id: true, name: true, username: true, avatarUrl: true } } },
+          },
           creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
-          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+          lead: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },
       });
 
@@ -85,17 +109,6 @@ export async function POST(request: NextRequest) {
           details: { title: newIdea.title },
         },
       });
-
-      if (assignedToId) {
-        await tx.activityLog.create({
-          data: {
-            userId: session.user!.id,
-            ideaId: newIdea.id,
-            action: "IDEA_ASSIGNED",
-            details: { assignedToId },
-          },
-        });
-      }
 
       return newIdea;
     });

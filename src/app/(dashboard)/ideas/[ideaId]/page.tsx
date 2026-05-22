@@ -39,10 +39,11 @@ export default async function IdeaDetailPage({
     where: { id: ideaId },
     include: {
       creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
-      assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+      lead: { select: { id: true, name: true, username: true, avatarUrl: true } },
       tasks: {
         orderBy: { order: "asc" },
         include: {
+          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
           submissions: { orderBy: { createdAt: "desc" } },
           revisionTasks: { orderBy: { createdAt: "asc" } },
           statusTransitions: { orderBy: { changedAt: "desc" } },
@@ -61,7 +62,11 @@ export default async function IdeaDetailPage({
 
   if (!idea) notFound();
 
-  const isOwner = idea.assignedToId === user.id;
+  const associates = await prisma.user.findMany({
+    where: { role: "ASSOCIATE" },
+    select: { id: true, name: true, username: true },
+    orderBy: { name: "asc" },
+  });
 
   return (
     <div className="space-y-6">
@@ -81,8 +86,8 @@ export default async function IdeaDetailPage({
           {idea.creator.name}
         </div>
         <div>
-          <span className="font-medium text-foreground">Assigned to:</span>{" "}
-          {idea.assignee?.name ?? "Unassigned"}
+          <span className="font-medium text-foreground">Lead:</span>{" "}
+          {idea.lead?.name ?? "—"}
         </div>
         <div>
           <span className="font-medium text-foreground">Created:</span>{" "}
@@ -92,8 +97,9 @@ export default async function IdeaDetailPage({
 
       <IdeaDetailClient
         tasks={JSON.parse(JSON.stringify(idea.tasks))}
-        isOwner={isOwner}
+        currentUserId={user.id}
         isCTO={userIsCTO}
+        associates={associates}
       />
 
       {/* Activity Log */}

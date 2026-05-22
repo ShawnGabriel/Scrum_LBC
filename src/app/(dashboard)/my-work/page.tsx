@@ -10,9 +10,10 @@ export default async function MyWorkPage() {
   const user = session.user as { id: string; role: string };
 
   const ideas = await prisma.idea.findMany({
-    where: { assignedToId: user.id },
+    where: { tasks: { some: { assignedToId: user.id } } },
     include: {
       tasks: {
+        where: { assignedToId: user.id },
         orderBy: { order: "asc" },
         include: {
           submissions: { orderBy: { createdAt: "desc" } },
@@ -31,9 +32,9 @@ export default async function MyWorkPage() {
       <div className="space-y-6">
         <h1 className="text-xl font-semibold text-foreground">My Work</h1>
         <div className="rounded-lg border border-border bg-surface p-12 text-center">
-          <p className="text-muted-foreground">No idea assigned to you yet.</p>
+          <p className="text-muted-foreground">No tasks assigned to you yet.</p>
           <p className="mt-1 text-sm text-label">
-            Your CTO will assign ideas for you to work on.
+            Your CTO will assign tasks for you to work on.
           </p>
         </div>
       </div>

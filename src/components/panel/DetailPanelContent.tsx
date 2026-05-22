@@ -22,10 +22,12 @@ interface DetailPanelContentProps {
     isRevision: boolean;
     revisionNote: string | null;
     createdAt: string;
+    assignedToId: string | null;
+    assignee: { id: string; name: string; username: string } | null;
     idea: {
       id: string;
       title: string;
-      assignee: { id: string; name: string } | null;
+      lead: { id: string; name: string } | null;
       creator: { id: string; name: string };
     };
     submissions: {
@@ -79,7 +81,7 @@ export function DetailPanelContent({
   const [loading, setLoading] = useState(false);
 
   const isCTO = userRole === "CTO";
-  const isAssignee = task.idea.assignee?.id === currentUserId;
+  const isAssignee = task.assignedToId === currentUserId;
 
   function refresh() {
     queryClient.invalidateQueries({ queryKey: ["task-detail", task.id] });
@@ -159,13 +161,28 @@ export function DetailPanelContent({
               {task.idea.title}
             </span>
           </div>
-          {task.idea.assignee && (
-            <div className="flex items-center gap-2">
-              <span className="w-20 text-[10px] uppercase tracking-wider text-label">Assignee</span>
+          <div className="flex items-center gap-2">
+            <span className="w-20 text-[10px] uppercase tracking-wider text-label">Assignee</span>
+            {task.assignee ? (
               <div className="flex items-center gap-1.5">
-                <Avatar name={task.idea.assignee.name} size="xs" />
+                <Avatar name={task.assignee.name} size="xs" />
                 <span className="text-[11px] uppercase tracking-wider text-foreground">
-                  {task.idea.assignee.name}
+                  {task.assignee.name}
+                </span>
+              </div>
+            ) : (
+              <span className="text-[11px] uppercase tracking-wider text-label">
+                Unassigned
+              </span>
+            )}
+          </div>
+          {task.idea.lead && (
+            <div className="flex items-center gap-2">
+              <span className="w-20 text-[10px] uppercase tracking-wider text-label">Lead</span>
+              <div className="flex items-center gap-1.5">
+                <Avatar name={task.idea.lead.name} size="xs" />
+                <span className="text-[11px] uppercase tracking-wider text-foreground">
+                  {task.idea.lead.name}
                 </span>
               </div>
             </div>

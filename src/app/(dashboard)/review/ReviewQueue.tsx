@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, RotateCcw, GitCommit } from "lucide-react";
-import type { Task, Idea, Submission } from "@/generated/prisma/client";
+import type { Task, Submission } from "@/generated/prisma/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
@@ -11,9 +11,8 @@ import { useToast } from "@/components/ui/toast";
 import { formatRelativeTime } from "@/lib/utils";
 
 type ReviewTask = Task & {
-  idea: Idea & {
-    assignee: { id: string; name: string; username: string; avatarUrl: string | null } | null;
-  };
+  assignee: { id: string; name: string; username: string; avatarUrl: string | null } | null;
+  idea: { id: string; title: string };
   submissions: Submission[];
 };
 
@@ -78,20 +77,20 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
             </div>
 
             <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-              {task.idea.assignee && (
+              {task.assignee && (
                 <div className="flex items-center gap-1.5">
-                  {task.idea.assignee.avatarUrl ? (
+                  {task.assignee.avatarUrl ? (
                     <img
-                      src={task.idea.assignee.avatarUrl}
-                      alt={task.idea.assignee.name}
+                      src={task.assignee.avatarUrl}
+                      alt={task.assignee.name}
                       className="h-4 w-4 rounded-full object-cover"
                     />
                   ) : (
                     <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[10px] font-medium text-primary">
-                      {task.idea.assignee.name.charAt(0)}
+                      {task.assignee.name.charAt(0)}
                     </div>
                   )}
-                  <span>{task.idea.assignee.name}</span>
+                  <span>{task.assignee.name}</span>
                 </div>
               )}
 

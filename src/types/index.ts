@@ -16,19 +16,11 @@ export type TaskWithDetails = Task & {
   revisionTasks: Task[];
   statusTransitions: StatusTransition[];
   parentTask: Task | null;
+  assignee: User | null;
 };
 
 export type IdeaWithTasks = Idea & {
   tasks: TaskWithDetails[];
   creator: User;
-  assignee: User | null;
-};
-
-export type BoardUser = User & {
-  assignedIdeas: (Idea & {
-    tasks: (Task & {
-      revisionTasks: Task[];
-      submissions: Submission[];
-    })[];
-  })[];
+  lead: User | null;
 };

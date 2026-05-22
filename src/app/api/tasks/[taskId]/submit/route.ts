@@ -83,7 +83,7 @@ export async function POST(
     }
 
     const userId = session.user.id;
-    if (task.idea.assignedToId !== userId) {
+    if (task.assignedToId !== userId) {
       return NextResponse.json(
         { error: "You can only submit work for tasks assigned to you" },
         { status: 403 }

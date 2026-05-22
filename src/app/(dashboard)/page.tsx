@@ -17,10 +17,11 @@ export default async function DashboardPage() {
       status: { in: ["ASSIGNED", "IN_PROGRESS", "IN_REVIEW"] },
     },
     include: {
-      assignee: true,
+      lead: true,
       tasks: {
         orderBy: { order: "asc" },
         include: {
+          assignee: true,
           revisionTasks: { orderBy: { order: "asc" } },
           submissions: { orderBy: { createdAt: "desc" } },
           statusTransitions: { orderBy: { changedAt: "desc" } },

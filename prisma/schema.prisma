@@ -35,8 +35,9 @@ model User {
   passwordHash  String
   role          Role          @default(ASSOCIATE)
   avatarUrl     String?
-  assignedIdeas Idea[]        @relation("AssignedIdeas")
+  ledIdeas      Idea[]        @relation("IdeaLead")
   createdIdeas  Idea[]        @relation("CreatedIdeas")
+  assignedTasks Task[]        @relation("TaskAssignee")
   submissions   Submission[]
   activityLogs  ActivityLog[]
   createdAt     DateTime      @default(now())
@@ -50,8 +51,8 @@ model Idea {
   status       IdeaStatus    @default(DRAFT)
   creator      User          @relation("CreatedIdeas", fields: [createdById], references: [id])
   createdById  String
-  assignee     User?         @relation("AssignedIdeas", fields: [assignedToId], references: [id])
-  assignedToId String?
+  lead         User?         @relation("IdeaLead", fields: [leadId], references: [id])
+  leadId       String?
   tasks        Task[]
   activityLogs ActivityLog[]
   createdAt    DateTime      @default(now())
@@ -66,6 +67,8 @@ model Task {
   order             Int                @default(0)
   idea              Idea               @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   ideaId            String
+  assignee          User?              @relation("TaskAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId      String?
   parentTask        Task?              @relation("Revisions", fields: [parentTaskId], references: [id])
   parentTaskId      String?
   revisionTasks     Task[]             @relation("Revisions")

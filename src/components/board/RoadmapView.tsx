@@ -9,11 +9,12 @@ type TaskWithRelations = Task & {
   submissions: Submission[];
   revisionTasks: Task[];
   statusTransitions: { changedAt: Date }[];
+  assignee: User | null;
 };
 
 type IdeaWithRelations = Idea & {
   tasks: TaskWithRelations[];
-  assignee: User | null;
+  lead: User | null;
 };
 
 interface RoadmapViewProps {

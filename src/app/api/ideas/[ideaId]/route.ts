@@ -21,13 +21,14 @@ export async function GET(
         tasks: {
           orderBy: { order: "asc" },
           include: {
+            assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
             revisionTasks: { orderBy: { order: "asc" } },
             submissions: { orderBy: { createdAt: "desc" } },
             statusTransitions: { orderBy: { changedAt: "desc" } },
           },
         },
         creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
-        assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        lead: { select: { id: true, name: true, username: true, avatarUrl: true } },
       },
     });
 
@@ -59,7 +60,12 @@ export async function PATCH(
 
     const { ideaId } = await params;
     const body = await request.json();
-    const { title, description, assignedToId, status } = body;
+    const { title, description, leadId, status } = body as {
+      title?: string;
+      description?: string;
+      leadId?: string | null;
+      status?: string;
+    };
 
     const existingIdea = await prisma.idea.findUnique({
       where: { id: ideaId },
@@ -73,33 +79,29 @@ export async function PATCH(
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (status !== undefined) updateData.status = status;
-
-    if (assignedToId !== undefined) {
-      updateData.assignedToId = assignedToId;
-      // If assigning for the first time, set status to ASSIGNED
-      if (!existingIdea.assignedToId && assignedToId) {
-        updateData.status = "ASSIGNED";
-      }
-    }
+    if (leadId !== undefined) updateData.leadId = leadId || null;
 
     const updatedIdea = await prisma.$transaction(async (tx) => {
       const idea = await tx.idea.update({
         where: { id: ideaId },
         data: updateData,
         include: {
-          tasks: { orderBy: { order: "asc" } },
+          tasks: {
+            orderBy: { order: "asc" },
+            include: { assignee: { select: { id: true, name: true, username: true, avatarUrl: true } } },
+          },
           creator: { select: { id: true, name: true, username: true, avatarUrl: true } },
-          assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+          lead: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },
       });
 
-      if (assignedToId !== undefined && assignedToId !== existingIdea.assignedToId) {
+      if (leadId !== undefined && leadId !== existingIdea.leadId) {
         await tx.activityLog.create({
           data: {
             userId: session.user!.id,
             ideaId: idea.id,
-            action: "IDEA_ASSIGNED",
-            details: { assignedToId },
+            action: "IDEA_LEAD_CHANGED",
+            details: { from: existingIdea.leadId, to: leadId || null },
           },
         });
       }

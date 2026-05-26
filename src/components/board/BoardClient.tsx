@@ -8,6 +8,7 @@ import { ViewSwitcher } from "./ViewSwitcher";
 import { TableView } from "./TableView";
 import { KanbanView } from "./KanbanView";
 import { RoadmapView } from "./RoadmapView";
+import { PeopleView } from "./PeopleView";
 import { DetailPanel } from "@/components/panel/DetailPanel";
 
 type TaskWithRelations = Task & {
@@ -67,6 +68,14 @@ export function BoardClient({ ideas, currentUserId, userRole }: BoardClientProps
         )}
         {view === "roadmap" && (
           <RoadmapView ideas={ideas} userRole={userRole} onTaskClick={openPanel} />
+        )}
+        {view === "people" && (
+          <PeopleView
+            ideas={ideas}
+            currentUserId={currentUserId}
+            userRole={userRole}
+            onTaskClick={openPanel}
+          />
         )}
       </div>
 

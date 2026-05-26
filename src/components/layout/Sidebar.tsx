@@ -11,6 +11,7 @@ import {
   Calendar,
   CheckCircle,
   Plus,
+  GitPullRequest,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
@@ -25,6 +26,7 @@ const mainLinks = [
   { href: "/my-work", label: "My Work", icon: User },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/standup", label: "Standup", icon: Calendar },
+  { href: "/contributions", label: "Contributions", icon: GitPullRequest },
 ];
 
 const ctoLinks = [

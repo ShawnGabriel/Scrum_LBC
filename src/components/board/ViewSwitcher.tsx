@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, Kanban, CalendarRange } from "lucide-react";
+import { LayoutGrid, Kanban, CalendarRange, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ViewType } from "@/hooks/use-view-preference";
 
@@ -13,6 +13,7 @@ const TABS: { value: ViewType; label: string; Icon: typeof LayoutGrid }[] = [
   { value: "table", label: "Table", Icon: LayoutGrid },
   { value: "kanban", label: "Kanban", Icon: Kanban },
   { value: "roadmap", label: "Roadmap", Icon: CalendarRange },
+  { value: "people", label: "People", Icon: Users },
 ];
 
 export function ViewSwitcher({ view, onChange }: ViewSwitcherProps) {

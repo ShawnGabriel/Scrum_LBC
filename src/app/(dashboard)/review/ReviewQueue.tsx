@@ -7,6 +7,7 @@ import type { Task, Submission } from "@/generated/prisma/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
+import { PRBadge } from "@/components/tasks/PRBadge";
 import { useToast } from "@/components/ui/toast";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -95,11 +96,21 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
               )}
 
               {latestSubmission && (
-                <div className="flex items-center gap-1">
-                  <GitCommit className="h-3 w-3" />
-                  <code className="rounded bg-surface-elevated px-1 py-0.5 font-mono">
-                    {latestSubmission.commitRef.substring(0, 8)}
-                  </code>
+                <div className="flex items-center gap-2">
+                  {latestSubmission.prUrl && latestSubmission.prNumber != null && (
+                    <PRBadge
+                      prUrl={latestSubmission.prUrl}
+                      prNumber={latestSubmission.prNumber}
+                      prState={latestSubmission.prState}
+                      prMerged={latestSubmission.prMerged}
+                    />
+                  )}
+                  <div className="flex items-center gap-1">
+                    <GitCommit className="h-3 w-3" />
+                    <code className="rounded bg-surface-elevated px-1 py-0.5 font-mono">
+                      {latestSubmission.commitRef.substring(0, 8)}
+                    </code>
+                  </div>
                 </div>
               )}
 

@@ -10,6 +10,7 @@ import { StatusPill } from "@/components/board/StatusPill";
 import { SubmitWorkDialog } from "@/components/tasks/SubmitWorkDialog";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
 import { PRBadge } from "@/components/tasks/PRBadge";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import { formatRelativeTime } from "@/lib/utils";
 import type { TaskStatus } from "@/generated/prisma/client";
 
@@ -166,12 +167,16 @@ export function DetailPanelContent({
           <div className="flex items-center gap-2">
             <span className="w-20 text-[10px] uppercase tracking-wider text-label">Assignee</span>
             {task.assignee ? (
-              <div className="flex items-center gap-1.5">
+              <PersonLink
+                userId={task.assignee.id}
+                title={`View ${task.assignee.name}'s PR contributions`}
+                className="gap-1.5"
+              >
                 <Avatar name={task.assignee.name} size="xs" />
                 <span className="text-[11px] uppercase tracking-wider text-foreground">
                   {task.assignee.name}
                 </span>
-              </div>
+              </PersonLink>
             ) : (
               <span className="text-[11px] uppercase tracking-wider text-label">
                 Unassigned
@@ -181,12 +186,16 @@ export function DetailPanelContent({
           {task.idea.lead && (
             <div className="flex items-center gap-2">
               <span className="w-20 text-[10px] uppercase tracking-wider text-label">Lead</span>
-              <div className="flex items-center gap-1.5">
+              <PersonLink
+                userId={task.idea.lead.id}
+                title={`View ${task.idea.lead.name}'s PR contributions`}
+                className="gap-1.5"
+              >
                 <Avatar name={task.idea.lead.name} size="xs" />
                 <span className="text-[11px] uppercase tracking-wider text-foreground">
                   {task.idea.lead.name}
                 </span>
-              </div>
+              </PersonLink>
             </div>
           )}
           {task.dueDate && (

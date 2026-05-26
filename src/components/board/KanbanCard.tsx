@@ -4,12 +4,14 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, GitCommit } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import type { TaskStatus } from "@/generated/prisma/client";
 
 interface KanbanCardProps {
   id: string;
   title: string;
   ideaTitle: string;
+  assigneeId: string | null;
   assigneeName: string | null;
   submissionCount: number;
   status: TaskStatus;
@@ -20,6 +22,7 @@ export function KanbanCard({
   id,
   title,
   ideaTitle,
+  assigneeId,
   assigneeName,
   submissionCount,
   onClick,
@@ -65,7 +68,9 @@ export function KanbanCard({
 
           <div className="mt-2 flex items-center justify-between">
             {assigneeName ? (
-              <Avatar name={assigneeName} size="xs" />
+              <PersonLink userId={assigneeId} title={`View ${assigneeName}'s PR contributions`}>
+                <Avatar name={assigneeName} size="xs" />
+              </PersonLink>
             ) : (
               <span />
             )}

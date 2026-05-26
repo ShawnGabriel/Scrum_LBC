@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { ContributionGraph } from "./ContributionGraph";
 
@@ -91,7 +92,10 @@ export function ContributionsClient({
               key={user.id}
               className="overflow-hidden rounded-sm border border-border bg-surface"
             >
-              <div className="flex items-center gap-3 border-b border-border bg-surface-elevated px-4 py-3">
+              <Link
+                href={`/contributions/${user.id}`}
+                className="flex items-center gap-3 border-b border-border bg-surface-elevated px-4 py-3 transition-colors hover:bg-surface-hover"
+              >
                 <Avatar name={user.name} size="sm" />
                 <div className="min-w-0">
                   <p className="truncate text-[12px] font-semibold uppercase tracking-wider text-foreground">
@@ -109,7 +113,7 @@ export function ContributionsClient({
                     Pull requests
                   </p>
                 </div>
-              </div>
+              </Link>
 
               <div className="overflow-x-auto px-4 py-4">
                 <ContributionGraph

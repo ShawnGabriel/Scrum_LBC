@@ -8,6 +8,7 @@ import { SubmitWorkDialog } from "@/components/tasks/SubmitWorkDialog";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import { useToast } from "@/components/ui/toast";
 import { Check, RotateCcw, GitCommit } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
@@ -112,10 +113,14 @@ export function IdeaDetailClient({
 
               <div className="ml-4 flex items-center gap-2 text-xs text-muted-foreground">
                 {task.assignee ? (
-                  <span className="flex items-center gap-1.5">
+                  <PersonLink
+                    userId={task.assignee.id}
+                    title={`View ${task.assignee.name}'s PR contributions`}
+                    className="gap-1.5"
+                  >
                     <Avatar name={task.assignee.name} size="xs" />
                     <span className="text-foreground">{task.assignee.name}</span>
-                  </span>
+                  </PersonLink>
                 ) : (
                   <span className="text-label">Unassigned</span>
                 )}

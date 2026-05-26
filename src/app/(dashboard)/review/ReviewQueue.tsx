@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RevisionForm } from "@/components/tasks/RevisionForm";
 import { PRBadge } from "@/components/tasks/PRBadge";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import { useToast } from "@/components/ui/toast";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -79,7 +80,11 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
 
             <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
               {task.assignee && (
-                <div className="flex items-center gap-1.5">
+                <PersonLink
+                  userId={task.assignee.id}
+                  title={`View ${task.assignee.name}'s PR contributions`}
+                  className="gap-1.5"
+                >
                   {task.assignee.avatarUrl ? (
                     <img
                       src={task.assignee.avatarUrl}
@@ -92,7 +97,7 @@ export function ReviewQueue({ tasks }: ReviewQueueProps) {
                     </div>
                   )}
                   <span>{task.assignee.name}</span>
-                </div>
+                </PersonLink>
               )}
 
               {latestSubmission && (

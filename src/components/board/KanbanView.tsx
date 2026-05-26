@@ -35,6 +35,7 @@ interface FlatTask {
   title: string;
   status: TaskStatus;
   ideaTitle: string;
+  assigneeId: string | null;
   assigneeName: string | null;
   submissionCount: number;
 }
@@ -58,6 +59,7 @@ export function KanbanView({ ideas, currentUserId, userRole, onTaskClick }: Kanb
         title: task.title,
         status: task.status,
         ideaTitle: idea.title,
+        assigneeId: task.assignee?.id ?? null,
         assigneeName: task.assignee?.name ?? null,
         submissionCount: task.submissions.length,
       }))
@@ -164,6 +166,7 @@ export function KanbanView({ ideas, currentUserId, userRole, onTaskClick }: Kanb
                   id={task.id}
                   title={task.title}
                   ideaTitle={task.ideaTitle}
+                  assigneeId={task.assigneeId}
                   assigneeName={task.assigneeName}
                   submissionCount={task.submissionCount}
                   status={task.status}

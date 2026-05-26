@@ -7,6 +7,7 @@ import { getStatusColor } from "@/lib/status";
 import { ProgressBar } from "./ProgressBar";
 import { TableRow } from "./TableRow";
 import { Avatar } from "@/components/ui/avatar";
+import { PersonLink } from "@/components/contributions/PersonLink";
 
 type TaskWithRelations = Task & {
   submissions: Submission[];
@@ -52,9 +53,17 @@ export function TableGroup({
   return (
     <div className="mb-4 overflow-hidden rounded-sm border border-border bg-surface">
       {/* Group header */}
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-hover"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        className="flex w-full cursor-pointer items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-hover"
       >
         <div
           className="h-4 w-0.5 rounded-sm"
@@ -73,18 +82,21 @@ export function TableGroup({
             <span className="text-[9px] font-semibold uppercase tracking-wider text-label">
               Lead
             </span>
-            <AvatarChip name={idea.lead.name} label={`Lead: ${idea.lead.name}`} />
+            <PersonLink userId={idea.lead.id} title={`View ${idea.lead.name}'s PR contributions`}>
+              <AvatarChip name={idea.lead.name} label={`Lead: ${idea.lead.name}`} />
+            </PersonLink>
           </div>
         )}
         {uniqueAssignees.length > 0 && (
           <div className="flex items-center -space-x-1.5">
             {uniqueAssignees.slice(0, 5).map((u) => (
-              <AvatarChip
-                key={u.id}
-                name={u.name}
-                label={u.name}
-                className="ring-1 ring-surface hover:z-10"
-              />
+              <PersonLink key={u.id} userId={u.id} title={`View ${u.name}'s PR contributions`}>
+                <AvatarChip
+                  name={u.name}
+                  label={u.name}
+                  className="ring-1 ring-surface hover:z-10"
+                />
+              </PersonLink>
             ))}
             {uniqueAssignees.length > 5 && (
               <span className="ml-2 text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -96,7 +108,7 @@ export function TableGroup({
         <div className="ml-auto">
           <ProgressBar completed={completed} total={total} />
         </div>
-      </button>
+      </div>
 
       {/* Column headers */}
       {isExpanded && (
@@ -124,6 +136,7 @@ export function TableGroup({
             <TableRow
               key={task.id}
               task={task}
+              assigneeId={task.assignee?.id ?? null}
               assigneeName={task.assignee?.name ?? null}
               currentUserId={currentUserId}
               userRole={userRole}

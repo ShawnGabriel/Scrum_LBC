@@ -8,6 +8,7 @@ import { ProgressBar } from "./ProgressBar";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusPill } from "./StatusPill";
 import { RevisionsTooltip } from "./RevisionsTooltip";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import { formatRelativeTime } from "@/lib/utils";
 
 type TaskWithRelations = Task & {
@@ -50,9 +51,17 @@ export function PeopleGroup({
   return (
     <div className="mb-4 overflow-hidden rounded-sm border border-border bg-surface">
       {/* Group header */}
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-hover"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        className="flex w-full cursor-pointer items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-hover"
       >
         <div
           className="h-4 w-0.5 rounded-sm"
@@ -64,13 +73,20 @@ export function PeopleGroup({
           <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
         )}
         {user ? (
-          <Avatar name={user.name} size="sm" />
+          <PersonLink userId={user.id} title={`View ${user.name}'s PR contributions`}>
+            <Avatar name={user.name} size="sm" />
+            <span className="ml-2 text-[12px] font-semibold uppercase tracking-wider text-foreground hover:text-primary">
+              {displayName}
+            </span>
+          </PersonLink>
         ) : (
-          <UserCircle2 className="h-5 w-5 text-muted-foreground" />
+          <>
+            <UserCircle2 className="h-5 w-5 text-muted-foreground" />
+            <span className="text-[12px] font-semibold uppercase tracking-wider text-foreground">
+              {displayName}
+            </span>
+          </>
         )}
-        <span className="text-[12px] font-semibold uppercase tracking-wider text-foreground">
-          {displayName}
-        </span>
         {isMe && (
           <span className="rounded-sm border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary">
             You
@@ -82,7 +98,7 @@ export function PeopleGroup({
         <div className="ml-auto">
           <ProgressBar completed={completed} total={total} />
         </div>
-      </button>
+      </div>
 
       {/* Column headers */}
       {isExpanded && (

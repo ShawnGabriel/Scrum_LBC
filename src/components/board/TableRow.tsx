@@ -4,10 +4,12 @@ import type { Task, Submission, TaskStatus } from "@/generated/prisma/client";
 import { StatusPill } from "./StatusPill";
 import { RevisionsTooltip } from "./RevisionsTooltip";
 import { Avatar } from "@/components/ui/avatar";
+import { PersonLink } from "@/components/contributions/PersonLink";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface TableRowProps {
   task: Task & { submissions: Submission[]; revisionTasks: Task[]; statusTransitions: { changedAt: Date }[] };
+  assigneeId: string | null;
   assigneeName: string | null;
   currentUserId: string;
   userRole: string;
@@ -17,6 +19,7 @@ interface TableRowProps {
 
 export function TableRow({
   task,
+  assigneeId,
   assigneeName,
   currentUserId,
   userRole,
@@ -59,7 +62,11 @@ export function TableRow({
 
       {/* Assignee */}
       <div className="flex w-[120px] shrink-0 items-center justify-center border-l border-border py-2">
-        {assigneeName && <Avatar name={assigneeName} size="sm" />}
+        {assigneeName && (
+          <PersonLink userId={assigneeId} title={`View ${assigneeName}'s PR contributions`}>
+            <Avatar name={assigneeName} size="sm" />
+          </PersonLink>
+        )}
       </div>
 
       {/* Last submission */}

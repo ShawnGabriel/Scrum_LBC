@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { Providers } from "@/components/Providers";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { PresenceRail } from "@/components/presence/PresenceRail";
 
 export default async function DashboardLayout({
   children,
@@ -18,12 +19,14 @@ export default async function DashboardLayout({
   const user = session.user as { id: string; name?: string | null; role: string };
   const userName = user.name ?? "User";
   const userRole = user.role ?? "ASSOCIATE";
+  const userId = user.id;
 
   return (
     <Providers>
       <Sidebar userRole={userRole} userName={userName} />
+      <PresenceRail currentUserId={userId} />
 
-      <div className="flex h-screen flex-col overflow-hidden">
+      <div className="flex h-screen flex-col overflow-hidden lg:pr-[220px]">
         <Header userName={userName} userRole={userRole} />
 
         <main className="flex-1 overflow-y-auto bg-background p-5">

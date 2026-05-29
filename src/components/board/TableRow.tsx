@@ -72,7 +72,7 @@ export function TableRow({
       {/* Last submission */}
       <div className="flex w-[140px] shrink-0 items-center justify-center border-l border-border py-2">
         {lastSubmission ? (
-          <span className="truncate rounded-sm border border-border bg-surface-elevated px-2 py-0.5 font-mono text-[10px] text-primary">
+          <span className="truncate rounded-lg border border-border bg-surface-elevated px-2 py-0.5 font-mono text-[10px] text-primary">
             {lastSubmission.commitRef.slice(0, 8)}
           </span>
         ) : (

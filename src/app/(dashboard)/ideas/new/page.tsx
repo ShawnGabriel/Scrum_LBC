@@ -231,7 +231,7 @@ export default function NewIdeaPage() {
                 id="lead"
                 value={leadId}
                 onChange={(e) => setLeadId(e.target.value)}
-                className="h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 <option value="">No lead</option>
                 {associates.map((emp) => (
@@ -252,7 +252,7 @@ export default function NewIdeaPage() {
           {tasks.map((task, index) => (
             <div
               key={index}
-              className="flex flex-col gap-2 rounded-md border border-border p-3"
+              className="flex flex-col gap-2 rounded-xl border border-border p-3"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground uppercase">
@@ -284,7 +284,7 @@ export default function NewIdeaPage() {
                 <select
                   value={task.assignedToId}
                   onChange={(e) => updateTask(index, "assignedToId", e.target.value)}
-                  className="h-9 flex-1 rounded-md border border-border bg-surface px-3 text-[12px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className="h-9 flex-1 rounded-xl border border-border bg-surface px-3 text-[12px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   disabled={loadingAssociates}
                 >
                   <option value="">Unassigned</option>
@@ -317,7 +317,7 @@ export default function NewIdeaPage() {
                         type="button"
                         onClick={() => toggleReviewer(index, cto.id)}
                         className={cn(
-                          "inline-flex h-7 items-center gap-1.5 rounded-sm border px-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-150 ease-out active:scale-95",
+                          "inline-flex h-7 items-center gap-1.5 rounded-lg border px-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-150 ease-out active:scale-95",
                           selected
                             ? "border-primary bg-primary/15 text-primary shadow-[inset_0_0_0_1px_rgba(123,184,255,0.35)]"
                             : "border-border bg-transparent text-muted-foreground hover:border-border-strong hover:text-foreground"

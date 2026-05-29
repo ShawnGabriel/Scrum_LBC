@@ -194,7 +194,7 @@ export function HomeClient({
     return (
       <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
         <Greeting userName={firstName} taskCount={0} reviewCount={0} />
-        <div className="rounded-lg border border-border bg-surface p-12 text-center animate-in fade-in scale-in duration-500">
+        <div className="rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-12 text-center animate-in fade-in scale-in duration-500">
           <Sparkles className="mx-auto h-8 w-8 text-primary/70 pulse-soft" />
           <p className="mt-4 text-base text-foreground">All clear.</p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -340,7 +340,7 @@ export function HomeClient({
                   {section.items.map(({ task, idea }, i) => (
                     <div
                       key={task.id}
-                      className="group rounded-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)] animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+                      className="group rounded-xl transition-all duration-200 ease-out hover:-translate-y-0.5 hover:drop-shadow-[0_8px_20px_rgba(0,0,0,0.35)] animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
                       style={{
                         animationDelay: `${320 + sectionIndex * 90 + i * 50}ms`,
                         animationDuration: "440ms",
@@ -492,16 +492,16 @@ function DailyProgress({
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg border border-border bg-surface p-5 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
+      className="glass relative overflow-hidden rounded-2xl p-6 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
       style={{ animationDelay: "80ms" }}
     >
-      {/* Subtle gradient wash to lift the hero */}
+      {/* Layered gradient wash + accent corner glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-60"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 12% 0%, rgba(123,184,255,0.10), transparent 50%)",
+            "radial-gradient(circle at 10% 0%, rgba(149,128,255,0.18), transparent 55%), radial-gradient(circle at 100% 100%, rgba(240,71,121,0.10), transparent 50%)",
         }}
       />
 
@@ -556,8 +556,8 @@ function DailyProgress({
                 x2="100%"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#7BB8FF" />
-                <stop offset="100%" stopColor="#A8C8FF" />
+                <stop offset="0%" stopColor="#7B68EE" />
+                <stop offset="100%" stopColor="#9580FF" />
               </linearGradient>
             </defs>
           </svg>
@@ -608,8 +608,8 @@ function DailyProgress({
               style={{
                 width: `${percent}%`,
                 background:
-                  "linear-gradient(90deg, #7BB8FF 0%, #A8C8FF 100%)",
-                boxShadow: "0 0 12px rgba(123,184,255,0.45)",
+                  "linear-gradient(90deg, #7B68EE 0%, #9580FF 100%)",
+                boxShadow: "0 0 14px rgba(149,128,255,0.55)",
               }}
             />
           </div>
@@ -692,7 +692,7 @@ function ReviewSection({
           return (
             <div
               key={task.id}
-              className="group relative rounded-md border border-border bg-surface p-3 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-hover animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+              className="group relative rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-surface-hover hover:shadow-[0_8px_24px_-8px_rgba(149,128,255,0.35)] animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
               style={{
                 borderLeftWidth: "4px",
                 borderLeftColor: "var(--color-primary)",
@@ -801,7 +801,7 @@ function StatStrip({
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border/60 sm:grid-cols-4">
       {stats.map((stat, i) => (
         <div
           key={stat.label}

@@ -8,7 +8,7 @@ export function ProgressBar({ completed, total }: ProgressBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1 w-16 overflow-hidden rounded-sm bg-border">
+      <div className="h-1 w-16 overflow-hidden rounded-lg bg-border">
         <div
           className="h-full bg-status-green transition-all"
           style={{ width: `${pct}%` }}

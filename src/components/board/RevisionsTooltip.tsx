@@ -53,7 +53,7 @@ export function RevisionsTooltip({ revisionTasks }: RevisionsTooltipProps) {
         ref={triggerRef}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
-        className="shrink-0 cursor-default rounded-sm border border-status-orange/30 bg-status-orange/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-status-orange transition-colors hover:bg-status-orange/20"
+        className="shrink-0 cursor-default rounded-lg border border-status-orange/30 bg-status-orange/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-status-orange transition-colors hover:bg-status-orange/20"
       >
         {count} revision{count > 1 ? "s" : ""}
       </span>
@@ -63,7 +63,7 @@ export function RevisionsTooltip({ revisionTasks }: RevisionsTooltipProps) {
           <div
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
-            className={`fixed z-[100] overflow-hidden rounded-sm border border-border bg-surface-elevated shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-150 ease-out ${
+            className={`fixed z-[100] overflow-hidden rounded-lg border border-border bg-surface-elevated shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-150 ease-out ${
               open
                 ? "opacity-100 translate-y-0"
                 : "pointer-events-none opacity-0 -translate-y-1"
@@ -87,7 +87,7 @@ export function RevisionsTooltip({ revisionTasks }: RevisionsTooltipProps) {
                       {rt.title}
                     </p>
                     <span
-                      className="shrink-0 rounded-sm px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                      className="shrink-0 rounded-lg px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
                       style={{
                         backgroundColor: getStatusColor(rt.status),
                         color: "#050B1A",

@@ -148,7 +148,7 @@ export function DetailPanelContent({
         )}
 
         {task.isRevision && task.revisionNote && (
-          <div className="mb-3 rounded-sm border border-status-orange/30 bg-status-orange/10 px-3 py-2">
+          <div className="mb-3 rounded-lg border border-status-orange/30 bg-status-orange/10 px-3 py-2">
             <p className="text-[10px] font-medium uppercase tracking-wider text-status-orange">
               Revision Note
             </p>
@@ -269,7 +269,7 @@ export function DetailPanelContent({
                         prMerged={sub.prMerged}
                       />
                     )}
-                    <code className="rounded-sm border border-border bg-surface-elevated px-1.5 py-0.5 text-[10px] text-primary">
+                    <code className="rounded-lg border border-border bg-surface-elevated px-1.5 py-0.5 text-[10px] text-primary">
                       {sub.commitRef.slice(0, 8)}
                     </code>
                     {sub.branch && (
@@ -301,7 +301,7 @@ export function DetailPanelContent({
             {task.revisionTasks.map((rev) => (
               <div
                 key={rev.id}
-                className="flex items-start gap-2 rounded-sm border border-border bg-surface-elevated px-3 py-2"
+                className="flex items-start gap-2 rounded-lg border border-border bg-surface-elevated px-3 py-2"
               >
                 <div
                   className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full"

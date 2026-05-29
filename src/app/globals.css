@@ -1,84 +1,87 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Surfaces */
-  --color-background: #050B1A;
-  --color-foreground: #E8EBF5;
-  --color-surface: #0D1428;
-  --color-surface-hover: #131B33;
-  --color-surface-elevated: #11192E;
+  /* ───────────── Surfaces (warmer dark, Discord-inspired) ───────────── */
+  --color-background: #1A1B2E;
+  --color-foreground: #ECEDF5;
+  --color-surface: #232544;
+  --color-surface-hover: #2A2D52;
+  --color-surface-elevated: #2E3160;
 
   /* Sidebar */
-  --color-sidebar: #070D1F;
-  --color-sidebar-hover: #1C2647;
-  --color-sidebar-active-bg: #243366;
-  --color-sidebar-text: #B8C1DB;
-  --color-sidebar-active: #7BB8FF;
+  --color-sidebar: #14152A;
+  --color-sidebar-hover: #2A2D52;
+  --color-sidebar-active-bg: #383B7A;
+  --color-sidebar-text: #B8BCDB;
+  --color-sidebar-active: #9580FF;
 
-  /* Primary / accent (cornflower) */
-  --color-primary: #7BB8FF;
-  --color-primary-hover: #9BC8FF;
-  --color-primary-foreground: #050B1A;
+  /* Primary / accent — blurple gradient */
+  --color-primary: #7B68EE;
+  --color-primary-hover: #9580FF;
+  --color-primary-soft: #4F3FAA;
+  --color-primary-foreground: #FFFFFF;
 
-  /* Status — preserved semantics, dark-tuned */
+  /* Status — Discord-flavored, warmer */
   --color-status-white:     #6B7493;
-  --color-status-yellow:    #E8A538;
-  --color-status-green:     #52D499;
-  --color-status-orange:    #E66478;
-  --color-status-completed: #A8C8FF;
+  --color-status-yellow:    #FAA61A;
+  --color-status-green:     #43B581;
+  --color-status-orange:    #F04747;
+  --color-status-completed: #9580FF;
 
-  /* Legacy status aliases (kept until callers migrate) */
+  /* Legacy status aliases */
   --color-status-not-started: #6B7493;
-  --color-status-working:     #E8A538;
-  --color-status-review:      #52D499;
-  --color-status-stuck:       #E66478;
-  --color-status-done:        #A8C8FF;
+  --color-status-working:     #FAA61A;
+  --color-status-review:      #43B581;
+  --color-status-stuck:       #F04747;
+  --color-status-done:        #9580FF;
 
   /* Borders & muted */
-  --color-border: #1F2840;
-  --color-border-strong: #2B3656;
-  --color-muted: #11192E;
-  --color-muted-foreground: #7B86A8;
-  --color-label: #4A5470;
+  --color-border: #2E3160;
+  --color-border-strong: #3D4090;
+  --color-muted: #2A2D52;
+  --color-muted-foreground: #8B92B8;
+  --color-label: #6B7299;
 
   /* Cards */
-  --color-card: #0D1428;
-  --color-card-foreground: #E8EBF5;
+  --color-card: #232544;
+  --color-card-foreground: #ECEDF5;
 
   /* Destructive */
-  --color-destructive: #E66478;
-  --color-destructive-foreground: #050B1A;
+  --color-destructive: #F04747;
+  --color-destructive-foreground: #FFFFFF;
 
-  /* Typography — mono everywhere */
-  --font-sans: var(--font-geist-mono);
-  --font-mono: var(--font-geist-mono);
+  /* Typography — sans for UI, mono for code/IDs */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Radius — terminal sharp */
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
+  /* Radius — soft, modern, less blocky */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Subpixel + ligature polish */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(123, 184, 255, 0.25);
+  background: rgba(149, 128, 255, 0.35);
   color: var(--color-foreground);
 }
 
-/* Scrollbar styling */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -86,28 +89,103 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2B3656;
-  border-radius: 3px;
+  background: rgba(125, 128, 168, 0.25);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4A5470;
+  background: rgba(149, 128, 255, 0.45);
+  background-clip: padding-box;
 }
 
-/* Focus ring — visible only when keyboard navigating, subtle ring */
+/* Focus ring */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(5, 11, 26, 1), 0 0 0 3px rgba(123, 184, 255, 0.55);
-  border-radius: 3px;
+  box-shadow:
+    0 0 0 2px var(--color-background),
+    0 0 0 4px rgba(149, 128, 255, 0.55);
+  border-radius: 8px;
 }
 
-/* ═══════════════════════════ Motion ═══════════════════════════
-   Inspired by Linear, Vercel, Stripe, Things 3:
-   - Short durations (180–320ms) — anything longer feels sluggish
-   - Ease-out curves so motion settles, never overshoots
-   - Use transform/opacity only — no layout thrash
-   - Stagger via animationDelay for orchestrated reveals
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════ Ambient orbs (drifting background) ═══════════════════
+   Three large blurred gradients slowly drift across the viewport behind
+   the app. Low opacity so content stays readable. */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ambient::before,
+.ambient::after,
+.ambient > .orb {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+/* Orb 1 — top-left, blurple */
+.ambient::before {
+  width: 560px;
+  height: 560px;
+  top: -180px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(123, 104, 238, 0.85), rgba(123, 104, 238, 0) 70%);
+  animation: orb-drift-a 28s ease-in-out infinite alternate;
+}
+
+/* Orb 2 — bottom-right, lighter blurple */
+.ambient::after {
+  width: 640px;
+  height: 640px;
+  bottom: -220px;
+  right: -180px;
+  background: radial-gradient(circle, rgba(149, 128, 255, 0.65), rgba(149, 128, 255, 0) 70%);
+  animation: orb-drift-b 34s ease-in-out infinite alternate;
+}
+
+/* Orb 3 — center, pink/magenta accent */
+.ambient > .orb {
+  width: 420px;
+  height: 420px;
+  top: 40%;
+  left: 55%;
+  background: radial-gradient(circle, rgba(240, 71, 121, 0.35), rgba(240, 71, 121, 0) 70%);
+  animation: orb-drift-c 40s ease-in-out infinite alternate;
+}
+
+@keyframes orb-drift-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(80px, 60px) scale(1.08); }
+  100% { transform: translate(40px, 120px) scale(1.02); }
+}
+@keyframes orb-drift-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-100px, -80px) scale(1.1); }
+  100% { transform: translate(-60px, -40px) scale(1.04); }
+}
+@keyframes orb-drift-c {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(calc(-50% + 120px), calc(-50% - 80px)) scale(1.15); }
+  100% { transform: translate(calc(-50% - 80px), calc(-50% + 100px)) scale(0.95); }
+}
+
+/* Make sure app content sits above ambient */
+#app-shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════ Motion ═══════════════════════════ */
 
 :root {
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -120,13 +198,13 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Global tap/active feedback — any element with .interactive gets press scale */
 .interactive {
-  transition: transform 140ms var(--ease-out-quint),
-              background-color 160ms var(--ease-out-quint),
-              border-color 160ms var(--ease-out-quint),
-              color 160ms var(--ease-out-quint),
-              box-shadow 160ms var(--ease-out-quint);
+  transition:
+    transform 140ms var(--ease-out-quint),
+    background-color 160ms var(--ease-out-quint),
+    border-color 160ms var(--ease-out-quint),
+    color 160ms var(--ease-out-quint),
+    box-shadow 160ms var(--ease-out-quint);
 }
 .interactive:active {
   transform: scale(0.97);
@@ -136,8 +214,8 @@ html {
 @keyframes route-enter {
   from {
     opacity: 0;
-    transform: translateY(6px);
-    filter: blur(2px);
+    transform: translateY(8px);
+    filter: blur(3px);
   }
   to {
     opacity: 1;
@@ -147,7 +225,7 @@ html {
 }
 
 .route-enter {
-  animation: route-enter 420ms var(--ease-out-expo) both;
+  animation: route-enter 480ms var(--ease-out-expo) both;
   will-change: opacity, transform, filter;
 }
 
@@ -188,32 +266,30 @@ html {
 }
 
 @keyframes ring-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(123, 184, 255, 0.4); }
-  70%  { box-shadow: 0 0 0 8px rgba(123, 184, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(123, 184, 255, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(149, 128, 255, 0.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(149, 128, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(149, 128, 255, 0); }
 }
 
-/* Used by progress bars — animates from 0 to actual % via --progress var. */
 @keyframes progress-grow {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
 
-/* Used by circular progress rings — counts up stroke-dashoffset. */
 @keyframes ring-fill {
   from { stroke-dashoffset: var(--ring-circumference); }
   to   { stroke-dashoffset: var(--ring-offset); }
 }
 
-/* Used for count-up numbers fading in. */
-@keyframes count-up {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Subtle gradient sheen across primary surfaces */
+@keyframes sheen-sweep {
+  0%   { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(220%); }
 }
 
 /* ── Utilities ──────────────────────────────────────────────── */
 .animate-in {
-  animation-duration: 320ms;
+  animation-duration: 380ms;
   animation-timing-function: var(--ease-out-expo);
   animation-fill-mode: both;
 }
@@ -224,7 +300,6 @@ html {
 .slide-in-from-bottom-3   { animation-name: slide-in-from-bottom-3; }
 .scale-in                 { animation-name: scale-in; }
 
-/* Composed: fade + slide together (animation-name wins over fade-in alone) */
 .animate-in.fade-in.slide-in-from-bottom-1 { animation-name: slide-in-from-bottom-1; }
 .animate-in.fade-in.slide-in-from-bottom-2 { animation-name: slide-in-from-bottom-2; }
 .animate-in.fade-in.slide-in-from-bottom-3 { animation-name: slide-in-from-bottom-3; }
@@ -242,20 +317,18 @@ html {
 .ease-out-expo { animation-timing-function: var(--ease-out-expo); }
 .ease-spring   { animation-timing-function: var(--ease-spring); }
 
-/* Animated progress bar — set width via inline style or --progress */
 .progress-grow {
   transform-origin: left center;
   animation: progress-grow 900ms var(--ease-out-expo) both;
   animation-delay: 200ms;
 }
 
-/* Shimmer skeleton placeholder */
 .shimmer {
   background: linear-gradient(
     90deg,
-    rgba(43, 54, 86, 0.4) 25%,
-    rgba(74, 84, 112, 0.55) 50%,
-    rgba(43, 54, 86, 0.4) 75%
+    rgba(46, 49, 96, 0.4) 25%,
+    rgba(75, 80, 144, 0.55) 50%,
+    rgba(46, 49, 96, 0.4) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
@@ -264,30 +337,39 @@ html {
 .pulse-soft  { animation: pulse-soft 2.4s ease-in-out infinite; }
 .ring-pulse  { animation: ring-pulse 2s ease-out infinite; }
 
-/* ── View Transitions API ──────────────────────────────────────
-   Chrome/Edge get a native cross-fade + slide on route change.
-   The route-enter class above layers extra motion on the new page. */
+/* Glassy elevated card — for hero / focus surfaces */
+.glass {
+  background: linear-gradient(
+    180deg,
+    rgba(35, 37, 68, 0.88) 0%,
+    rgba(35, 37, 68, 0.72) 100%
+  );
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(149, 128, 255, 0.12);
+}
+
+/* ── View Transitions API ────────────────────────────────────── */
 @view-transition {
   navigation: auto;
 }
 
 ::view-transition-old(root) {
-  animation: 180ms var(--ease-out-quint) both fade-out-slight;
+  animation: 200ms var(--ease-out-quint) both fade-out-slight;
 }
 
 ::view-transition-new(root) {
-  animation: 320ms var(--ease-out-expo) both fade-in-slight;
+  animation: 360ms var(--ease-out-expo) both fade-in-slight;
 }
 
 @keyframes fade-out-slight {
-  to { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 0; transform: translateY(-6px); }
 }
 @keyframes fade-in-slight {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
 }
 
-/* ── Reduced motion ────────────────────────────────────────────
-   Honor user preference — strip animations but keep instant feedback. */
+/* ── Reduced motion ──────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *,
@@ -298,4 +380,9 @@ html {
     transition-duration: 0.01ms !important;
   }
   .interactive:active { transform: none; }
+  .ambient::before,
+  .ambient::after,
+  .ambient > .orb {
+    animation: none !important;
+  }
 }

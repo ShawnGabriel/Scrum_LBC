@@ -49,7 +49,7 @@ export function PeopleGroup({
   const displayName = user?.name ?? "Unassigned";
 
   return (
-    <div className="mb-4 overflow-hidden rounded-sm border border-border bg-surface">
+    <div className="mb-4 overflow-hidden rounded-lg border border-border bg-surface">
       {/* Group header */}
       <div
         role="button"
@@ -64,7 +64,7 @@ export function PeopleGroup({
         className="flex w-full cursor-pointer items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-hover"
       >
         <div
-          className="h-4 w-0.5 rounded-sm"
+          className="h-4 w-0.5 rounded-lg"
           style={{ backgroundColor: accentColor }}
         />
         {isExpanded ? (
@@ -88,7 +88,7 @@ export function PeopleGroup({
           </>
         )}
         {isMe && (
-          <span className="rounded-sm border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary">
+          <span className="rounded-lg border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary">
             You
           </span>
         )}
@@ -195,7 +195,7 @@ function PersonTaskRow({
       {/* Last submission */}
       <div className="flex w-[140px] shrink-0 items-center justify-center border-l border-border py-2">
         {lastSubmission ? (
-          <span className="truncate rounded-sm border border-border bg-surface-elevated px-2 py-0.5 font-mono text-[10px] text-primary">
+          <span className="truncate rounded-lg border border-border bg-surface-elevated px-2 py-0.5 font-mono text-[10px] text-primary">
             {lastSubmission.commitRef.slice(0, 8)}
           </span>
         ) : (

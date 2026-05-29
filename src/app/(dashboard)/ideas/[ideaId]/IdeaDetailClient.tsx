@@ -129,7 +129,7 @@ export function IdeaDetailClient({
                     value={task.assignedToId ?? ""}
                     disabled={reassigningTaskId === task.id}
                     onChange={(e) => handleReassign(task.id, e.target.value)}
-                    className="ml-2 h-7 rounded-sm border border-border bg-surface px-2 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="ml-2 h-7 rounded-lg border border-border bg-surface px-2 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   >
                     <option value="">Unassign</option>
                     {associates.map((a) => (
@@ -183,7 +183,7 @@ export function IdeaDetailClient({
 
               {/* Submission history */}
               {task.submissions.length > 0 && (
-                <div className="ml-4 rounded-md border border-border bg-surface-elevated p-3 space-y-2">
+                <div className="ml-4 rounded-xl border border-border bg-surface-elevated p-3 space-y-2">
                   <p className="text-xs font-medium text-muted-foreground uppercase">
                     Submissions
                   </p>

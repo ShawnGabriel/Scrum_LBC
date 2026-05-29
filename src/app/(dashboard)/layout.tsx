@@ -26,12 +26,10 @@ export default async function DashboardLayout({
       <Sidebar userRole={userRole} userName={userName} />
       <PresenceRail currentUserId={userId} />
 
-      <div className="flex h-screen flex-col overflow-hidden lg:pr-[220px]">
+      <div className="flex h-screen flex-col overflow-hidden lg:pr-[232px]">
         <Header userName={userName} userRole={userRole} />
 
-        <main className="flex-1 overflow-y-auto bg-background p-5">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </Providers>
   );

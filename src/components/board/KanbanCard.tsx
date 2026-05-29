@@ -45,7 +45,7 @@ export function KanbanCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group rounded-sm border border-border bg-surface-elevated p-3 transition-colors hover:border-border-strong hover:bg-surface-hover ${
+      className={`group rounded-lg border border-border bg-surface-elevated p-3 transition-colors hover:border-border-strong hover:bg-surface-hover ${
         isDragging ? "opacity-50" : ""
       }`}
     >

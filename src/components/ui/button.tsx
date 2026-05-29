@@ -3,12 +3,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-sm text-xs font-medium uppercase tracking-wider transition-all duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium tracking-normal transition-all duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:shadow-[0_2px_12px_rgba(123,184,255,0.35)] focus-visible:ring-primary",
+          "text-primary-foreground shadow-[0_4px_14px_-2px_rgba(123,104,238,0.5)] hover:shadow-[0_6px_20px_-2px_rgba(149,128,255,0.65)] hover:brightness-110 focus-visible:ring-primary " +
+          "bg-[linear-gradient(135deg,_#7B68EE_0%,_#9580FF_100%)] hover:bg-[linear-gradient(135deg,_#8772F3_0%,_#A28FFF_100%)]",
         secondary:
           "bg-surface-hover text-foreground border border-border hover:bg-surface-elevated hover:border-border-strong focus-visible:ring-primary",
         outline:
@@ -16,12 +17,12 @@ const buttonVariants = cva(
         ghost:
           "bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive",
+          "bg-destructive text-destructive-foreground hover:brightness-110 hover:shadow-[0_4px_14px_-2px_rgba(240,71,71,0.5)] focus-visible:ring-destructive",
       },
       size: {
-        sm: "h-7 px-2.5 text-[11px]",
-        default: "h-9 px-4",
-        lg: "h-11 px-6 text-sm",
+        sm: "h-8 px-3 text-xs",
+        default: "h-10 px-4",
+        lg: "h-12 px-6 text-base",
       },
     },
     defaultVariants: {

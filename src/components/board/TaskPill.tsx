@@ -58,7 +58,7 @@ export function TaskPill({ task, isOwner, onStatusChange, onSubmit }: TaskPillPr
 
   return (
     <div
-      className="group/pill flex flex-col gap-1.5 rounded-md border bg-surface px-3 py-2 transition-all duration-200 ease-out hover:bg-surface-hover hover:border-border-strong"
+      className="group/pill flex flex-col gap-2 rounded-xl border bg-surface/80 backdrop-blur-sm px-3.5 py-2.5 transition-all duration-200 ease-out hover:bg-surface-hover hover:border-border-strong"
       style={{ borderLeftWidth: "4px", borderLeftColor: colors.border }}
     >
       <div className="flex items-center justify-between gap-2">
@@ -83,9 +83,9 @@ export function TaskPill({ task, isOwner, onStatusChange, onSubmit }: TaskPillPr
 
       {/* GREEN status: show commit ref */}
       {task.status === "GREEN" && latestSubmission && (
-        <div className="flex items-center gap-1.5 text-xs text-emerald-700">
+        <div className="flex items-center gap-1.5 text-xs text-status-green">
           <GitCommit className="h-3.5 w-3.5" />
-          <code className="rounded bg-emerald-50 px-1.5 py-0.5 font-mono text-xs">
+          <code className="rounded-xl bg-status-green/15 px-1.5 py-0.5 font-mono text-[11px]">
             {latestSubmission.commitRef.substring(0, 8)}
           </code>
         </div>
@@ -98,7 +98,7 @@ export function TaskPill({ task, isOwner, onStatusChange, onSubmit }: TaskPillPr
 
       {/* COMPLETED status: checkmark */}
       {task.status === "COMPLETED" && (
-        <div className="flex items-center gap-1.5 text-xs text-teal-600">
+        <div className="flex items-center gap-1.5 text-xs text-status-completed">
           <Check className="h-3.5 w-3.5" />
           <span>Completed</span>
         </div>

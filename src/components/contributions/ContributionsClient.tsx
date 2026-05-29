@@ -90,7 +90,7 @@ export function ContributionsClient({
           users.map((user) => (
             <div
               key={user.id}
-              className="overflow-hidden rounded-sm border border-border bg-surface"
+              className="overflow-hidden rounded-lg border border-border bg-surface"
             >
               <Link
                 href={`/contributions/${user.id}`}
@@ -143,7 +143,7 @@ function YearButton({
     <button
       onClick={onClick}
       className={
-        "rounded-sm border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors " +
+        "rounded-lg border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors " +
         (active
           ? "border-primary bg-primary/10 text-primary"
           : "border-border bg-surface text-muted-foreground hover:bg-surface-hover hover:text-foreground")

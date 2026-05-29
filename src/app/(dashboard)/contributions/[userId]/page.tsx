@@ -100,7 +100,7 @@ export default async function UserContributionsPage({ params, searchParams }: Pa
       </div>
 
       {/* Header card */}
-      <div className="overflow-hidden rounded-sm border border-border bg-surface">
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
         <div className="flex items-center gap-4 px-5 py-4">
           <Avatar name={user.name} size="lg" />
           <div className="min-w-0 flex-1">
@@ -134,7 +134,7 @@ export default async function UserContributionsPage({ params, searchParams }: Pa
       />
 
       {/* Recent PRs */}
-      <div className="overflow-hidden rounded-sm border border-border bg-surface">
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
         <div className="border-b border-border bg-surface-elevated px-4 py-2.5">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-label">
             Recent pull requests

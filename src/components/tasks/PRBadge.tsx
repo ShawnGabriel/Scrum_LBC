@@ -33,7 +33,7 @@ export function PRBadge({ prUrl, prNumber, prState, prMerged }: PRBadgeProps) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      className={`inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider transition-opacity hover:opacity-80 ${colorClass}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider transition-opacity hover:opacity-80 ${colorClass}`}
       title={`PR #${prNumber} · ${label}`}
     >
       <Icon className="h-3 w-3" />

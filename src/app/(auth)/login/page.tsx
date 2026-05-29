@@ -41,21 +41,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <p className="text-[10px] uppercase tracking-wider text-label">
-            AUTH · SIGN IN
-          </p>
-          <CardTitle className="text-lg text-primary">Scrum · LBC</CardTitle>
-          <CardDescription>Quantitative Research Division</CardDescription>
+    <div className="relative flex min-h-screen items-center justify-center px-4">
+      <Card className="glass relative z-10 w-full max-w-sm overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 50% -10%, rgba(149,128,255,0.25), transparent 60%)",
+          }}
+        />
+        <CardHeader className="relative text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-base font-bold text-white bg-[linear-gradient(135deg,_#7B68EE_0%,_#9580FF_100%)] shadow-[0_8px_24px_-4px_rgba(123,104,238,0.5)]">
+            S
+          </div>
+          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardDescription>
+            Sign in to Scrum · LBC
+          </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="relative">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {error && (
-              <div className="flex items-center gap-2 rounded-sm border border-status-orange/30 bg-status-orange/10 px-3 py-2 text-[11px] uppercase tracking-wider text-status-orange">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <div className="flex items-center gap-2 rounded-lg border border-status-orange/30 bg-status-orange/10 px-3 py-2 text-sm text-status-orange animate-in fade-in slide-in-from-bottom-1 duration-300">
+                <AlertCircle className="h-4 w-4 shrink-0" />
                 {error}
               </div>
             )}
@@ -63,7 +73,7 @@ export default function LoginPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="username"
-                className="text-[10px] font-medium uppercase tracking-wider text-label"
+                className="text-xs font-medium text-muted-foreground"
               >
                 Username
               </label>
@@ -84,7 +94,7 @@ export default function LoginPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-[10px] font-medium uppercase tracking-wider text-label"
+                className="text-xs font-medium text-muted-foreground"
               >
                 Password
               </label>
@@ -100,7 +110,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" disabled={loading} className="mt-2 w-full">
-              {loading ? "Signing in…" : "Sign In"}
+              {loading ? "Signing in…" : "Sign in"}
             </Button>
           </form>
         </CardContent>

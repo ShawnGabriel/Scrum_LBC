@@ -35,7 +35,7 @@ export function ContributionsUserClient({
   }
 
   return (
-    <div className="overflow-hidden rounded-sm border border-border bg-surface">
+    <div className="overflow-hidden rounded-lg border border-border bg-surface">
       <div className="flex flex-wrap items-center gap-2 border-b border-border bg-surface-elevated px-4 py-2.5">
         <YearButton
           label="Last year"
@@ -75,7 +75,7 @@ function YearButton({
     <button
       onClick={onClick}
       className={
-        "rounded-sm border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors " +
+        "rounded-lg border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors " +
         (active
           ? "border-primary bg-primary/10 text-primary"
           : "border-border bg-surface text-muted-foreground hover:bg-surface-hover hover:text-foreground")

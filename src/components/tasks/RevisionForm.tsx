@@ -105,7 +105,7 @@ export function RevisionForm({
           {revisions.map((rev, index) => (
             <div
               key={index}
-              className="flex flex-col gap-2 rounded-md border border-border p-3"
+              className="flex flex-col gap-2 rounded-xl border border-border p-3"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground uppercase">

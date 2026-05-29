@@ -252,7 +252,7 @@ export function RoadmapView({ ideas, userRole, onTaskClick }: RoadmapViewProps) 
   }
 
   return (
-    <div className="overflow-hidden rounded-sm border border-border bg-surface">
+    <div className="overflow-hidden rounded-lg border border-border bg-surface">
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
         <p className="text-[11px] uppercase tracking-wider text-foreground">
           {monthLabel}
@@ -266,21 +266,21 @@ export function RoadmapView({ ideas, userRole, onTaskClick }: RoadmapViewProps) 
           <div className="flex items-center gap-1">
             <button
               onClick={goToday}
-              className="rounded-sm border border-border bg-surface-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+              className="rounded-lg border border-border bg-surface-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             >
               Today
             </button>
             <button
               onClick={goPrev}
               aria-label="Previous month"
-              className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+              className="rounded-lg border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={goNext}
               aria-label="Next month"
-              className="rounded-sm border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+              className="rounded-lg border border-border bg-surface-elevated p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
@@ -416,7 +416,7 @@ export function RoadmapView({ ideas, userRole, onTaskClick }: RoadmapViewProps) 
                         onTaskClick(row.task.id);
                       }}
                       className={cn(
-                        "absolute top-1/2 flex -translate-y-1/2 select-none items-center gap-1 rounded-sm border px-2 text-[10px] font-medium uppercase tracking-wider transition-shadow hover:brightness-125",
+                        "absolute top-1/2 flex -translate-y-1/2 select-none items-center gap-1 rounded-lg border px-2 text-[10px] font-medium uppercase tracking-wider transition-shadow hover:brightness-125",
                         STATUS_BAR_CLASS[row.task.status],
                         isCTO ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
                         isDragging && "shadow-[0_4px_20px_rgba(0,0,0,0.6)]"

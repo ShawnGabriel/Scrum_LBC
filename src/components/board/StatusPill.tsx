@@ -89,7 +89,7 @@ export function StatusPill({
           e.stopPropagation();
           if (canEdit) setIsOpen(!isOpen);
         }}
-        className="inline-flex min-w-[120px] items-center justify-center rounded-sm px-3 py-1 text-[10px] font-medium uppercase tracking-wider transition-opacity hover:opacity-90"
+        className="inline-flex min-w-[120px] items-center justify-center rounded-lg px-3 py-1 text-[10px] font-medium uppercase tracking-wider transition-opacity hover:opacity-90"
         style={{
           backgroundColor: getStatusColor(status),
           color: "#050B1A",
@@ -102,7 +102,7 @@ export function StatusPill({
         createPortal(
           <div
             ref={dropdownRef}
-            className="fixed z-[100] overflow-hidden rounded-sm border border-border bg-surface-elevated shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+            className="fixed z-[100] overflow-hidden rounded-lg border border-border bg-surface-elevated shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
             style={{
               top: coords.top,
               left: coords.left,

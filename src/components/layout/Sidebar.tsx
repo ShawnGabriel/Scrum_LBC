@@ -58,13 +58,13 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
         className={cn(
           "fixed inset-y-2 left-2 z-50 flex w-[240px] flex-col rounded-2xl border border-border bg-sidebar/90 backdrop-blur-xl transition-all duration-[320ms]",
           open
-            ? "translate-x-0 shadow-[12px_0_48px_-8px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(149,128,255,0.08)]"
+            ? "translate-x-0 shadow-[12px_0_48px_-8px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(99,115,200,0.08)]"
             : "-translate-x-[calc(100%+12px)]"
         )}
         style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div className="flex items-center gap-2.5 px-4 py-4">
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold text-primary-foreground bg-[linear-gradient(135deg,_#7B68EE_0%,_#9580FF_100%)] shadow-[0_4px_14px_-2px_rgba(123,104,238,0.5)]">
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold text-primary-foreground bg-[linear-gradient(135deg,_#5060B5_0%,_#6373C8_100%)] shadow-[0_4px_14px_-2px_rgba(80,96,181,0.5)]">
             S
             <span className="pointer-events-none absolute inset-0 rounded-xl bg-[linear-gradient(135deg,_rgba(255,255,255,0.25),_transparent_50%)]" />
           </div>
@@ -95,7 +95,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                   aria-hidden="true"
                   className={cn(
                     "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-primary transition-all duration-300 ease-out",
-                    active ? "h-6 opacity-100 shadow-[0_0_12px_rgba(149,128,255,0.7)]" : "h-0 opacity-0"
+                    active ? "h-6 opacity-100 shadow-[0_0_12px_rgba(99,115,200,0.7)]" : "h-0 opacity-0"
                   )}
                 />
                 <Icon
@@ -134,7 +134,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                       aria-hidden="true"
                       className={cn(
                         "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-primary transition-all duration-300 ease-out",
-                        active ? "h-6 opacity-100 shadow-[0_0_12px_rgba(149,128,255,0.7)]" : "h-0 opacity-0"
+                        active ? "h-6 opacity-100 shadow-[0_0_12px_rgba(99,115,200,0.7)]" : "h-0 opacity-0"
                       )}
                     />
                     <Icon

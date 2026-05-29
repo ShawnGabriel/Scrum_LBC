@@ -501,7 +501,7 @@ function DailyProgress({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 10% 0%, rgba(149,128,255,0.18), transparent 55%), radial-gradient(circle at 100% 100%, rgba(240,71,121,0.10), transparent 50%)",
+            "radial-gradient(circle at 10% 0%, rgba(99,115,200,0.18), transparent 55%), radial-gradient(circle at 100% 100%, rgba(240,71,121,0.10), transparent 50%)",
         }}
       />
 
@@ -556,8 +556,8 @@ function DailyProgress({
                 x2="100%"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#7B68EE" />
-                <stop offset="100%" stopColor="#9580FF" />
+                <stop offset="0%" stopColor="#5060B5" />
+                <stop offset="100%" stopColor="#6373C8" />
               </linearGradient>
             </defs>
           </svg>
@@ -608,8 +608,8 @@ function DailyProgress({
               style={{
                 width: `${percent}%`,
                 background:
-                  "linear-gradient(90deg, #7B68EE 0%, #9580FF 100%)",
-                boxShadow: "0 0 14px rgba(149,128,255,0.55)",
+                  "linear-gradient(90deg, #5060B5 0%, #6373C8 100%)",
+                boxShadow: "0 0 14px rgba(99,115,200,0.55)",
               }}
             />
           </div>
@@ -692,7 +692,7 @@ function ReviewSection({
           return (
             <div
               key={task.id}
-              className="group relative rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-surface-hover hover:shadow-[0_8px_24px_-8px_rgba(149,128,255,0.35)] animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+              className="group relative rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-surface-hover hover:shadow-[0_8px_24px_-8px_rgba(99,115,200,0.35)] animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
               style={{
                 borderLeftWidth: "4px",
                 borderLeftColor: "var(--color-primary)",

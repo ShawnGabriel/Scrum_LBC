@@ -48,11 +48,11 @@ export default function LoginPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(circle at 50% -10%, rgba(149,128,255,0.25), transparent 60%)",
+              "radial-gradient(circle at 50% -10%, rgba(99,115,200,0.25), transparent 60%)",
           }}
         />
         <CardHeader className="relative text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-base font-bold text-white bg-[linear-gradient(135deg,_#7B68EE_0%,_#9580FF_100%)] shadow-[0_8px_24px_-4px_rgba(123,104,238,0.5)]">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-base font-bold text-white bg-[linear-gradient(135deg,_#5060B5_0%,_#6373C8_100%)] shadow-[0_8px_24px_-4px_rgba(80,96,181,0.5)]">
             S
           </div>
           <CardTitle className="text-xl">Welcome back</CardTitle>

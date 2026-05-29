@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronRight, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -27,8 +27,6 @@ const AWAY_WINDOW_MS = 15 * 60 * 1000; // 15 min
 const HEARTBEAT_INTERVAL_MS = 30 * 1000; // 30 s
 const REFETCH_INTERVAL_MS = 30 * 1000;
 
-const STORAGE_KEY = "scrum-lbc-presence-rail-open";
-
 function getStatus(lastSeenAt: string | null, nowMs: number): Status {
   if (!lastSeenAt) return "offline";
   const seenMs = new Date(lastSeenAt).getTime();
@@ -38,26 +36,27 @@ function getStatus(lastSeenAt: string | null, nowMs: number): Status {
   return "offline";
 }
 
+const STATUS_DOT: Record<Status, string> = {
+  online: "bg-status-green",
+  away: "bg-status-yellow",
+  offline: "bg-label",
+};
+
+const STATUS_LABEL: Record<Status, string> = {
+  online: "Online",
+  away: "Away",
+  offline: "Offline",
+};
+
 interface PresenceRailProps {
   currentUserId: string;
 }
 
 export function PresenceRail({ currentUserId }: PresenceRailProps) {
   const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
-  const [mounted, setMounted] = useState(false);
-
-  // Hydrate open state from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "false") setIsOpen(false);
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    localStorage.setItem(STORAGE_KEY, isOpen ? "true" : "false");
-  }, [isOpen, mounted]);
+  const [expanded, setExpanded] = useState(false);
+  const enterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Heartbeat: ping on mount, on tab visibility focus, and every 30s while visible
   useEffect(() => {
@@ -95,118 +94,161 @@ export function PresenceRail({ currentUserId }: PresenceRailProps) {
     staleTime: 10 * 1000,
   });
 
-  // Tick locally so statuses transition online → away → offline without a refetch
+  // Tick locally so statuses transition without a refetch
   const [tick, setTick] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 30 * 1000);
     return () => clearInterval(id);
   }, []);
 
-  const grouped = useMemo(() => {
+  // Build a flat list ordered: online → away → offline (presence-sorted).
+  // Same array for both strip + expanded panel, no resorting flicker.
+  const ordered = useMemo(() => {
     const users = data?.users ?? [];
     const nowMs = Date.now();
     void tick;
+    const decorated = users.map((u) => ({
+      user: u,
+      status: getStatus(u.lastSeenAt, nowMs),
+    }));
+    const rank: Record<Status, number> = { online: 0, away: 1, offline: 2 };
+    decorated.sort((a, b) => {
+      const r = rank[a.status] - rank[b.status];
+      if (r !== 0) return r;
+      return a.user.name.localeCompare(b.user.name);
+    });
+    return decorated;
+  }, [data, tick]);
+
+  const onlineCount = ordered.filter((u) => u.status === "online").length;
+
+  function handleEnter() {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    enterTimer.current = setTimeout(() => setExpanded(true), 120);
+  }
+  function handleLeave() {
+    if (enterTimer.current) clearTimeout(enterTimer.current);
+    leaveTimer.current = setTimeout(() => setExpanded(false), 180);
+  }
+
+  // Group ordered list back into sections for the expanded panel
+  const grouped = useMemo(() => {
     const buckets: Record<Status, PresenceUser[]> = {
       online: [],
       away: [],
       offline: [],
     };
-    for (const u of users) {
-      buckets[getStatus(u.lastSeenAt, nowMs)].push(u);
-    }
+    for (const { user, status } of ordered) buckets[status].push(user);
     return buckets;
-  }, [data, tick]);
-
-  const onlineCount = grouped.online.length;
+  }, [ordered]);
 
   return (
-    <>
-      {/* Collapsed: small floating chip on the right edge */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed right-0 top-1/2 z-30 flex -translate-y-1/2 items-center gap-2 rounded-l-2xl border border-r-0 border-border bg-surface/80 backdrop-blur-md px-3 py-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 ease-out hover:bg-surface-hover hover:text-foreground hover:pr-4"
-          title="Show team presence"
-        >
-          <Users className="h-3.5 w-3.5" />
-          <span className="flex items-center gap-1.5">
-            <span className="relative inline-flex">
-              <span className="inline-block h-2 w-2 rounded-full bg-status-green" />
-              <span className="absolute inset-0 rounded-full bg-status-green animate-ping opacity-40" />
-            </span>
-            {onlineCount}
-          </span>
-        </button>
+    <aside
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className={cn(
+        "fixed inset-y-2 right-2 z-40 hidden flex-col overflow-hidden rounded-2xl border border-border bg-sidebar/90 backdrop-blur-xl transition-all duration-[280ms] ease-out lg:flex",
+        expanded
+          ? "w-[260px] shadow-[-12px_0_48px_-8px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(99,115,200,0.08)]"
+          : "w-[56px]"
       )}
+      style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
+    >
+      {/* Header — icon-only when collapsed, full label when expanded */}
+      <div className="flex h-12 items-center gap-2 border-b border-border/60 px-3.5">
+        <div className="relative shrink-0">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          {onlineCount > 0 && !expanded && (
+            <span className="absolute -right-1 -top-1 inline-flex h-2 w-2">
+              <span className="absolute inset-0 rounded-full bg-status-green opacity-50 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-status-green" />
+            </span>
+          )}
+        </div>
+        <div
+          className={cn(
+            "flex min-w-0 flex-1 items-baseline gap-1.5 transition-opacity duration-200",
+            expanded ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <p className="text-xs font-semibold text-foreground">Team</p>
+          <span className="truncate text-[11px] text-label">
+            · {onlineCount} online
+          </span>
+        </div>
+      </div>
 
-      {/* Expanded rail */}
-      <aside
-        className={cn(
-          "fixed inset-y-2 right-2 z-30 hidden w-[220px] flex-col rounded-2xl border border-border bg-sidebar/90 backdrop-blur-xl lg:flex",
-          !isOpen && "lg:hidden"
+      {/* Content area — strip vs grouped panel */}
+      <div className="flex-1 overflow-y-auto">
+        {/* COLLAPSED STRIP — avatars only, top to bottom */}
+        {!expanded && (
+          <ul className="space-y-1 px-2 py-3">
+            {ordered.map(({ user, status }) => (
+              <li key={user.id}>
+                <Link
+                  href={`/contributions/${user.id}`}
+                  title={`${user.name} · ${STATUS_LABEL[status]}`}
+                  className={cn(
+                    "group relative mx-auto flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ease-out hover:scale-110 active:scale-95",
+                    status === "offline" && "opacity-50 hover:opacity-100"
+                  )}
+                >
+                  <Avatar name={user.name} size="sm" />
+                  <span
+                    className={cn(
+                      "absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-sidebar",
+                      STATUS_DOT[status]
+                    )}
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
-      >
-        <div className="flex items-center justify-between border-b border-border/60 px-4 py-3.5">
-          <div className="flex items-center gap-2">
-            <Users className="h-3.5 w-3.5 text-muted-foreground" />
-            <p className="text-xs font-semibold text-foreground">Team</p>
-            <span className="text-[11px] text-label">· {onlineCount} online</span>
-          </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-hover hover:text-foreground"
-            title="Collapse"
-          >
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
 
-        <div className="flex-1 overflow-y-auto px-2 py-3">
-          <Section
-            label="Online"
-            color="bg-status-green"
-            users={grouped.online}
-            currentUserId={currentUserId}
-            emptyHint="No one is online right now"
-          />
-          <Section
-            label="Away"
-            color="bg-status-yellow"
-            users={grouped.away}
-            currentUserId={currentUserId}
-          />
-          <Section
-            label="Offline"
-            color="bg-label"
-            users={grouped.offline}
-            currentUserId={currentUserId}
-            dim
-          />
-        </div>
-      </aside>
-    </>
+        {/* EXPANDED PANEL — grouped by status with names */}
+        {expanded && (
+          <div className="px-2 py-3 animate-in fade-in duration-200">
+            {(["online", "away", "offline"] as Status[]).map((status) => {
+              const users = grouped[status];
+              if (
+                users.length === 0 &&
+                status !== "online" // always show online section even if empty
+              )
+                return null;
+              return (
+                <PresenceSection
+                  key={status}
+                  status={status}
+                  users={users}
+                  currentUserId={currentUserId}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </aside>
   );
 }
 
-interface SectionProps {
-  label: string;
-  color: string;
+function PresenceSection({
+  status,
+  users,
+  currentUserId,
+}: {
+  status: Status;
   users: PresenceUser[];
   currentUserId: string;
-  emptyHint?: string;
-  dim?: boolean;
-}
-
-function Section({ label, color, users, currentUserId, emptyHint, dim }: SectionProps) {
-  if (users.length === 0 && !emptyHint) return null;
+}) {
   return (
     <div className="mb-4">
       <p className="mb-1.5 flex items-center gap-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-label">
-        <span className={cn("h-1.5 w-1.5 rounded-full", color)} />
-        {label} · {users.length}
+        <span className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[status])} />
+        {STATUS_LABEL[status]} · {users.length}
       </p>
       {users.length === 0 ? (
-        <p className="px-2 text-[11px] text-label">{emptyHint}</p>
+        <p className="px-2 text-[11px] text-label">No one is online right now</p>
       ) : (
         <ul className="space-y-0.5">
           {users.map((u) => (
@@ -215,7 +257,7 @@ function Section({ label, color, users, currentUserId, emptyHint, dim }: Section
                 href={`/contributions/${u.id}`}
                 className={cn(
                   "flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-all duration-150 ease-out hover:bg-sidebar-hover hover:translate-x-0.5",
-                  dim && "opacity-60 hover:opacity-100"
+                  status === "offline" && "opacity-60 hover:opacity-100"
                 )}
                 title={`@${u.username} · ${u.role}`}
               >
@@ -224,7 +266,7 @@ function Section({ label, color, users, currentUserId, emptyHint, dim }: Section
                   <span
                     className={cn(
                       "absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full ring-2 ring-sidebar",
-                      color
+                      STATUS_DOT[status]
                     )}
                   />
                 </span>

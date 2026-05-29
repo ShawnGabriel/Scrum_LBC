@@ -47,7 +47,7 @@ function DialogContent({
       <DialogOverlay onClick={onClose} />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-[0_30px_80px_-12px_rgba(0,0,0,0.75),_0_0_0_1px_rgba(149,128,255,0.08)] animate-in fade-in scale-in duration-300 ease-out-expo",
+          "relative z-50 w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-[0_30px_80px_-12px_rgba(0,0,0,0.75),_0_0_0_1px_rgba(99,115,200,0.08)] animate-in fade-in scale-in duration-300 ease-out-expo",
           className
         )}
         {...props}

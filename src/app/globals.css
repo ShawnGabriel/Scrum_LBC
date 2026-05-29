@@ -10,15 +10,15 @@
 
   /* Sidebar */
   --color-sidebar: #14152A;
-  --color-sidebar-hover: #2A2D52;
-  --color-sidebar-active-bg: #383B7A;
+  --color-sidebar-hover: #232746;
+  --color-sidebar-active-bg: #2E3568;
   --color-sidebar-text: #B8BCDB;
-  --color-sidebar-active: #9580FF;
+  --color-sidebar-active: #6373C8;
 
-  /* Primary / accent — blurple gradient */
-  --color-primary: #7B68EE;
-  --color-primary-hover: #9580FF;
-  --color-primary-soft: #4F3FAA;
+  /* Primary / accent — muted navy-blurple */
+  --color-primary: #5060B5;
+  --color-primary-hover: #6373C8;
+  --color-primary-soft: #3A4790;
   --color-primary-foreground: #FFFFFF;
 
   /* Status — Discord-flavored, warmer */
@@ -26,14 +26,14 @@
   --color-status-yellow:    #FAA61A;
   --color-status-green:     #43B581;
   --color-status-orange:    #F04747;
-  --color-status-completed: #9580FF;
+  --color-status-completed: #6373C8;
 
   /* Legacy status aliases */
   --color-status-not-started: #6B7493;
   --color-status-working:     #FAA61A;
   --color-status-review:      #43B581;
   --color-status-stuck:       #F04747;
-  --color-status-done:        #9580FF;
+  --color-status-done:        #6373C8;
 
   /* Borders & muted */
   --color-border: #2E3160;
@@ -74,7 +74,7 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(149, 128, 255, 0.35);
+  background: rgba(99, 115, 200, 0.35);
   color: var(--color-foreground);
 }
 
@@ -96,7 +96,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(149, 128, 255, 0.45);
+  background: rgba(99, 115, 200, 0.45);
   background-clip: padding-box;
 }
 
@@ -105,7 +105,7 @@ body {
   outline: none;
   box-shadow:
     0 0 0 2px var(--color-background),
-    0 0 0 4px rgba(149, 128, 255, 0.55);
+    0 0 0 4px rgba(99, 115, 200, 0.55);
   border-radius: 8px;
 }
 
@@ -128,38 +128,38 @@ body {
   content: "";
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.55;
+  filter: blur(130px);
+  opacity: 0.5;
   will-change: transform;
 }
 
-/* Orb 1 — top-left, blurple */
+/* Orb 1 — top-left, navy */
 .ambient::before {
   width: 560px;
   height: 560px;
   top: -180px;
   left: -120px;
-  background: radial-gradient(circle, rgba(123, 104, 238, 0.85), rgba(123, 104, 238, 0) 70%);
+  background: radial-gradient(circle, rgba(80, 96, 181, 0.85), rgba(80, 96, 181, 0) 70%);
   animation: orb-drift-a 28s ease-in-out infinite alternate;
 }
 
-/* Orb 2 — bottom-right, lighter blurple */
+/* Orb 2 — bottom-right, lighter navy */
 .ambient::after {
   width: 640px;
   height: 640px;
   bottom: -220px;
   right: -180px;
-  background: radial-gradient(circle, rgba(149, 128, 255, 0.65), rgba(149, 128, 255, 0) 70%);
+  background: radial-gradient(circle, rgba(99, 115, 200, 0.55), rgba(99, 115, 200, 0) 70%);
   animation: orb-drift-b 34s ease-in-out infinite alternate;
 }
 
-/* Orb 3 — center, pink/magenta accent */
+/* Orb 3 — center, warm teal accent for subtle contrast */
 .ambient > .orb {
   width: 420px;
   height: 420px;
   top: 40%;
   left: 55%;
-  background: radial-gradient(circle, rgba(240, 71, 121, 0.35), rgba(240, 71, 121, 0) 70%);
+  background: radial-gradient(circle, rgba(67, 181, 129, 0.22), rgba(67, 181, 129, 0) 70%);
   animation: orb-drift-c 40s ease-in-out infinite alternate;
 }
 
@@ -266,9 +266,9 @@ html {
 }
 
 @keyframes ring-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(149, 128, 255, 0.45); }
-  70%  { box-shadow: 0 0 0 10px rgba(149, 128, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(149, 128, 255, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(99, 115, 200, 0.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(99, 115, 200, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 115, 200, 0); }
 }
 
 @keyframes progress-grow {
@@ -346,7 +346,7 @@ html {
   );
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(149, 128, 255, 0.12);
+  border: 1px solid rgba(99, 115, 200, 0.12);
 }
 
 /* ── View Transitions API ────────────────────────────────────── */

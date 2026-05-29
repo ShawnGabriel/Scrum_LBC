@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { cn } from "@/lib/utils";
 
-interface Associate {
+interface Person {
   id: string;
   name: string;
   username: string;
@@ -19,6 +20,7 @@ interface TaskRow {
   description: string;
   assignedToId: string;
   dueDate: string;
+  reviewerIds: string[];
 }
 
 export default function NewIdeaPage() {
@@ -29,25 +31,47 @@ export default function NewIdeaPage() {
   const [description, setDescription] = useState("");
   const [leadId, setLeadId] = useState("");
   const [ideaDueDate, setIdeaDueDate] = useState("");
-  const [tasks, setTasks] = useState<TaskRow[]>([
-    { title: "", description: "", assignedToId: "", dueDate: "" },
-  ]);
-  const [associates, setAssociates] = useState<Associate[]>([]);
+  const [associates, setAssociates] = useState<Person[]>([]);
+  const [ctos, setCtos] = useState<Person[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingAssociates, setLoadingAssociates] = useState(true);
 
+  const [tasks, setTasks] = useState<TaskRow[]>([
+    { title: "", description: "", assignedToId: "", dueDate: "", reviewerIds: [] },
+  ]);
+
   useEffect(() => {
-    async function fetchAssociates() {
+    async function fetchPeople() {
       try {
-        const res = await fetch("/api/board");
-        if (res.ok) {
-          const data = await res.json();
+        const [boardRes, ctoRes] = await Promise.all([
+          fetch("/api/board"),
+          fetch("/api/users/ctos"),
+        ]);
+        if (boardRes.ok) {
+          const data = await boardRes.json();
           setAssociates(
-            data.map((u: { id: string; name: string; username: string }) => ({
+            data.map((u: Person) => ({
               id: u.id,
               name: u.name,
               username: u.username,
             }))
+          );
+        }
+        if (ctoRes.ok) {
+          const data = await ctoRes.json();
+          const list: Person[] = data.map((u: Person) => ({
+            id: u.id,
+            name: u.name,
+            username: u.username,
+          }));
+          setCtos(list);
+          // Default new tasks to "Both" — all CTO ids selected
+          setTasks((prev) =>
+            prev.map((t) =>
+              t.reviewerIds.length === 0
+                ? { ...t, reviewerIds: list.map((c) => c.id) }
+                : t
+            )
           );
         }
       } catch {
@@ -56,13 +80,20 @@ export default function NewIdeaPage() {
         setLoadingAssociates(false);
       }
     }
-    fetchAssociates();
+    fetchPeople();
   }, []);
 
   function addTask() {
     setTasks((prev) => [
       ...prev,
-      { title: "", description: "", assignedToId: "", dueDate: "" },
+      {
+        title: "",
+        description: "",
+        assignedToId: "",
+        dueDate: "",
+        // New tasks default to "all CTOs" (Both, when there are 2)
+        reviewerIds: ctos.map((c) => c.id),
+      },
     ]);
   }
 
@@ -70,9 +101,26 @@ export default function NewIdeaPage() {
     setTasks((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function updateTask(index: number, field: keyof TaskRow, value: string) {
+  function updateTask(
+    index: number,
+    field: keyof TaskRow,
+    value: string | string[]
+  ) {
     setTasks((prev) =>
       prev.map((t, i) => (i === index ? { ...t, [field]: value } : t))
+    );
+  }
+
+  function toggleReviewer(index: number, ctoId: string) {
+    setTasks((prev) =>
+      prev.map((t, i) => {
+        if (i !== index) return t;
+        const has = t.reviewerIds.includes(ctoId);
+        const next = has
+          ? t.reviewerIds.filter((id) => id !== ctoId)
+          : [...t.reviewerIds, ctoId];
+        return { ...t, reviewerIds: next };
+      })
     );
   }
 
@@ -101,6 +149,7 @@ export default function NewIdeaPage() {
             order: i,
             assignedToId: t.assignedToId || undefined,
             dueDate: t.dueDate || undefined,
+            reviewerIds: t.reviewerIds,
           })),
         }),
       });
@@ -253,6 +302,60 @@ export default function NewIdeaPage() {
                   title="Due date"
                 />
               </div>
+
+              {ctos.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-label">
+                    <Eye className="h-3 w-3" />
+                    Reviewer
+                  </span>
+                  {ctos.map((cto) => {
+                    const selected = task.reviewerIds.includes(cto.id);
+                    return (
+                      <button
+                        key={cto.id}
+                        type="button"
+                        onClick={() => toggleReviewer(index, cto.id)}
+                        className={cn(
+                          "inline-flex h-7 items-center gap-1.5 rounded-sm border px-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-150 ease-out active:scale-95",
+                          selected
+                            ? "border-primary bg-primary/15 text-primary shadow-[inset_0_0_0_1px_rgba(123,184,255,0.35)]"
+                            : "border-border bg-transparent text-muted-foreground hover:border-border-strong hover:text-foreground"
+                        )}
+                        aria-pressed={selected}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={cn(
+                            "h-1.5 w-1.5 rounded-full transition-colors duration-150",
+                            selected ? "bg-primary" : "bg-border-strong"
+                          )}
+                        />
+                        {cto.name}
+                      </button>
+                    );
+                  })}
+                  {ctos.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateTask(
+                          index,
+                          "reviewerIds",
+                          task.reviewerIds.length === ctos.length
+                            ? []
+                            : ctos.map((c) => c.id)
+                        )
+                      }
+                      className="ml-auto text-[10px] uppercase tracking-wider text-label transition-colors hover:text-primary"
+                    >
+                      {task.reviewerIds.length === ctos.length
+                        ? "Clear"
+                        : "Select both"}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
 

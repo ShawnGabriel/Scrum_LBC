@@ -44,6 +44,7 @@ interface TaskInput {
   order?: number;
   assignedToId?: string;
   dueDate?: string;
+  reviewerIds?: string[];
 }
 
 export async function POST(request: NextRequest) {
@@ -92,6 +93,7 @@ export async function POST(request: NextRequest) {
               order: t.order ?? 0,
               assignedToId: t.assignedToId || null,
               dueDate: t.dueDate ? new Date(t.dueDate) : null,
+              reviewerIds: Array.isArray(t.reviewerIds) ? t.reviewerIds : [],
             })),
           },
         },

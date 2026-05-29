@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isCTO } from "@/lib/permissions";
 import { HomeClient } from "@/components/home/HomeClient";
 
 export default async function HomePage() {
@@ -27,11 +28,33 @@ export default async function HomePage() {
     orderBy: { updatedAt: "desc" },
   });
 
+  // For CTOs: fetch tasks waiting on this CTO's review.
+  // Task is "for me" if reviewerIds includes my id, OR if reviewerIds is empty
+  // (legacy/default = any CTO can review).
+  let reviewTasks: unknown[] = [];
+  if (isCTO(user.role)) {
+    const tasks = await prisma.task.findMany({
+      where: {
+        status: "GREEN",
+        OR: [{ reviewerIds: { has: user.id } }, { reviewerIds: { isEmpty: true } }],
+      },
+      include: {
+        assignee: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        idea: { select: { id: true, title: true } },
+        submissions: { orderBy: { createdAt: "desc" } },
+      },
+      orderBy: { updatedAt: "asc" },
+    });
+    reviewTasks = JSON.parse(JSON.stringify(tasks));
+  }
+
   return (
     <HomeClient
       userName={user.name ?? "there"}
       userId={user.id}
+      userRole={user.role}
       ideas={JSON.parse(JSON.stringify(ideas))}
+      reviewTasks={reviewTasks as never}
     />
   );
 }

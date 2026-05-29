@@ -71,6 +71,9 @@ model Task {
   ideaId            String
   assignee          User?              @relation("TaskAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
   assignedToId      String?
+  // CTO user ids who should review this task when submitted.
+  // Empty array means any CTO can review (legacy/default).
+  reviewerIds       String[]           @default([])
   parentTask        Task?              @relation("Revisions", fields: [parentTaskId], references: [id])
   parentTaskId      String?
   revisionTasks     Task[]             @relation("Revisions")

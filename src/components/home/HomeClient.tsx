@@ -11,7 +11,11 @@ import type {
 } from "@/generated/prisma/client";
 import { TaskPill } from "@/components/board/TaskPill";
 import { SubmitWorkDialog } from "@/components/tasks/SubmitWorkDialog";
+import { RevisionForm } from "@/components/tasks/RevisionForm";
+import { PRBadge } from "@/components/tasks/PRBadge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
+import { formatRelativeTime } from "@/lib/utils";
 import {
   CircleDot,
   Eye,
@@ -21,6 +25,9 @@ import {
   ArrowRight,
   Sparkles,
   Calendar,
+  Check,
+  RotateCcw,
+  Inbox,
 } from "lucide-react";
 
 type TaskWithRelations = Task & {
@@ -35,10 +42,23 @@ type IdeaWithTasks = Idea & {
   creator: { id: string; name: string };
 };
 
+type ReviewTask = Task & {
+  assignee: {
+    id: string;
+    name: string;
+    username: string;
+    avatarUrl: string | null;
+  } | null;
+  idea: { id: string; title: string };
+  submissions: Submission[];
+};
+
 interface HomeClientProps {
   userName: string;
   userId: string;
+  userRole: string;
   ideas: IdeaWithTasks[];
+  reviewTasks?: ReviewTask[];
 }
 
 function greeting() {
@@ -80,11 +100,22 @@ function completedAt(task: TaskWithRelations): Date | null {
   return last ? new Date(last.changedAt) : null;
 }
 
-export function HomeClient({ userName, ideas }: HomeClientProps) {
+export function HomeClient({
+  userName,
+  userRole,
+  ideas,
+  reviewTasks = [],
+}: HomeClientProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [submitDialogTaskId, setSubmitDialogTaskId] = useState<string | null>(
     null
   );
+  const [revisionTaskId, setRevisionTaskId] = useState<string | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+
+  const isCto = userRole === "CTO";
+  const hasReviews = isCto && reviewTasks.length > 0;
 
   const { active, review, upNext, needsFixes, completed, all, today } =
     useMemo(() => {
@@ -126,15 +157,43 @@ export function HomeClient({ userName, ideas }: HomeClientProps) {
 
   const firstName = userName.split(" ")[0];
 
-  const todayTotal = today.length;
+  // For CTOs, reviews count as "today's work".
+  const todayTotal = today.length + reviewTasks.length;
   const todayDone = today.filter(
     (t) => t.task.status === "COMPLETED" || t.task.status === "GREEN"
   ).length;
 
-  if (all.length === 0) {
+  async function handleApprove(taskId: string) {
+    setApprovingId(taskId);
+    try {
+      const res = await fetch(`/api/tasks/${taskId}/approve`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to approve");
+      }
+      toast("Task approved.", "success");
+      router.refresh();
+    } catch (error) {
+      toast(
+        error instanceof Error ? error.message : "Failed to approve task",
+        "error"
+      );
+    } finally {
+      setApprovingId(null);
+    }
+  }
+
+  function handleRevisionsCreated() {
+    setRevisionTaskId(null);
+    router.refresh();
+  }
+
+  if (all.length === 0 && !hasReviews) {
     return (
       <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <Greeting userName={firstName} taskCount={0} />
+        <Greeting userName={firstName} taskCount={0} reviewCount={0} />
         <div className="rounded-lg border border-border bg-surface p-12 text-center animate-in fade-in scale-in duration-500">
           <Sparkles className="mx-auto h-8 w-8 text-primary/70 pulse-soft" />
           <p className="mt-4 text-base text-foreground">All clear.</p>
@@ -207,7 +266,12 @@ export function HomeClient({ userName, ideas }: HomeClientProps) {
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         <Greeting
           userName={firstName}
-          taskCount={active.length + needsFixes.length}
+          taskCount={
+            active.length +
+            needsFixes.length +
+            (isCto ? reviewTasks.length : 0)
+          }
+          reviewCount={isCto ? reviewTasks.length : 0}
         />
       </div>
 
@@ -217,19 +281,31 @@ export function HomeClient({ userName, ideas }: HomeClientProps) {
         active={active.length}
         needsFixes={needsFixes.length}
         review={review.length}
+        reviewQueue={isCto ? reviewTasks.length : 0}
       />
 
-      <div
-        className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
-        style={{ animationDelay: "180ms" }}
-      >
-        <StatStrip
-          active={active.length}
-          review={review.length}
-          upNext={upNext.length}
-          needsFixes={needsFixes.length}
+      {hasReviews && (
+        <ReviewSection
+          tasks={reviewTasks}
+          approvingId={approvingId}
+          onApprove={handleApprove}
+          onRequestRevisions={(id) => setRevisionTaskId(id)}
         />
-      </div>
+      )}
+
+      {all.length > 0 && (
+        <div
+          className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
+          style={{ animationDelay: "180ms" }}
+        >
+          <StatStrip
+            active={active.length}
+            review={review.length}
+            upNext={upNext.length}
+            needsFixes={needsFixes.length}
+          />
+        </div>
+      )}
 
       <div className="space-y-8">
         {sections
@@ -325,6 +401,15 @@ export function HomeClient({ userName, ideas }: HomeClientProps) {
           onSubmitted={handleSubmitted}
         />
       )}
+
+      {revisionTaskId && (
+        <RevisionForm
+          taskId={revisionTaskId}
+          open={!!revisionTaskId}
+          onOpenChange={(open) => !open && setRevisionTaskId(null)}
+          onCreated={handleRevisionsCreated}
+        />
+      )}
     </div>
   );
 }
@@ -332,10 +417,28 @@ export function HomeClient({ userName, ideas }: HomeClientProps) {
 function Greeting({
   userName,
   taskCount,
+  reviewCount,
 }: {
   userName: string;
   taskCount: number;
+  reviewCount: number;
 }) {
+  let message: string;
+  if (taskCount === 0) {
+    message = "Nothing urgent on your plate.";
+  } else if (reviewCount > 0 && reviewCount === taskCount) {
+    message =
+      reviewCount === 1
+        ? "1 submission waiting on your review."
+        : `${reviewCount} submissions waiting on your review.`;
+  } else if (reviewCount > 0) {
+    message = `${taskCount} on your plate — ${reviewCount} waiting on review.`;
+  } else if (taskCount === 1) {
+    message = "You have 1 task that needs your attention.";
+  } else {
+    message = `You have ${taskCount} tasks that need your attention.`;
+  }
+
   return (
     <div className="space-y-1">
       <p className="text-[10px] uppercase tracking-wider text-label">
@@ -344,13 +447,7 @@ function Greeting({
       <h1 className="text-2xl font-semibold tracking-tight text-foreground">
         {greeting()}, {userName}.
       </h1>
-      <p className="text-sm text-muted-foreground">
-        {taskCount === 0
-          ? "Nothing urgent on your plate."
-          : taskCount === 1
-            ? "You have 1 task that needs your attention."
-            : `You have ${taskCount} tasks that need your attention.`}
-      </p>
+      <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
 }
@@ -361,12 +458,14 @@ function DailyProgress({
   active,
   needsFixes,
   review,
+  reviewQueue,
 }: {
   done: number;
   total: number;
   active: number;
   needsFixes: number;
   review: number;
+  reviewQueue: number;
 }) {
   const percent = total > 0 ? Math.round((done / total) * 100) : 0;
   const remaining = Math.max(total - done, 0);
@@ -521,6 +620,12 @@ function DailyProgress({
               className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-wider text-label animate-in fade-in fill-mode-both"
               style={{ animationDelay: "550ms" }}
             >
+              {reviewQueue > 0 && (
+                <span className="inline-flex items-center gap-1 text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  {reviewQueue} to review
+                </span>
+              )}
               {active > 0 && (
                 <span className="inline-flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-status-yellow" />
@@ -544,6 +649,136 @@ function DailyProgress({
         </div>
       </div>
     </div>
+  );
+}
+
+function ReviewSection({
+  tasks,
+  approvingId,
+  onApprove,
+  onRequestRevisions,
+}: {
+  tasks: ReviewTask[];
+  approvingId: string | null;
+  onApprove: (taskId: string) => void;
+  onRequestRevisions: (taskId: string) => void;
+}) {
+  return (
+    <section
+      className="space-y-3 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+      style={{ animationDelay: "140ms", animationDuration: "520ms" }}
+    >
+      <div className="flex items-baseline justify-between">
+        <div className="flex items-center gap-2">
+          <Inbox className="h-3.5 w-3.5 text-primary" />
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+            To review
+          </h2>
+          <span className="text-[11px] text-label tabular-nums">
+            {tasks.length}
+          </span>
+        </div>
+        <p className="text-[10px] uppercase tracking-wider text-label">
+          Submissions from your associates
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {tasks.map((task, i) => {
+          const latest = task.submissions[0];
+          const oldest = task.submissions[task.submissions.length - 1];
+          const isApproving = approvingId === task.id;
+
+          return (
+            <div
+              key={task.id}
+              className="group relative rounded-md border border-border bg-surface p-3 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-hover animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+              style={{
+                borderLeftWidth: "4px",
+                borderLeftColor: "var(--color-primary)",
+                animationDelay: `${200 + i * 50}ms`,
+                animationDuration: "440ms",
+              }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/ideas/${task.idea.id}`}
+                    className="block truncate text-[10px] uppercase tracking-wider text-label transition-colors hover:text-primary"
+                  >
+                    {task.idea.title}
+                  </Link>
+                  <p className="mt-0.5 truncate text-sm font-medium text-foreground">
+                    {task.title}
+                  </p>
+                </div>
+                {oldest && (
+                  <span className="shrink-0 text-[10px] uppercase tracking-wider text-label tabular-nums">
+                    {formatRelativeTime(new Date(oldest.createdAt))}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                {task.assignee && (
+                  <span className="inline-flex items-center gap-1.5">
+                    {task.assignee.avatarUrl ? (
+                      <img
+                        src={task.assignee.avatarUrl}
+                        alt={task.assignee.name}
+                        className="h-4 w-4 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-[9px] font-medium text-primary">
+                        {task.assignee.name.charAt(0)}
+                      </span>
+                    )}
+                    <span>{task.assignee.name}</span>
+                  </span>
+                )}
+                {latest?.prUrl && latest.prNumber != null && (
+                  <PRBadge
+                    prUrl={latest.prUrl}
+                    prNumber={latest.prNumber}
+                    prState={latest.prState}
+                    prMerged={latest.prMerged}
+                  />
+                )}
+                {latest && (
+                  <span className="inline-flex items-center gap-1">
+                    <GitCommit className="h-3 w-3" />
+                    <code className="rounded bg-surface-elevated px-1 py-0.5 font-mono text-[10px]">
+                      {latest.commitRef.substring(0, 8)}
+                    </code>
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-3 flex items-center justify-end gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onRequestRevisions(task.id)}
+                  className="gap-1.5 text-xs"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Request revisions
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => onApprove(task.id)}
+                  disabled={isApproving}
+                  className="gap-1.5 text-xs"
+                >
+                  <Check className="h-3 w-3" />
+                  {isApproving ? "Approving…" : "Approve"}
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 

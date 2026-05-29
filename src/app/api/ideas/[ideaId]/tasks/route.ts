@@ -20,7 +20,15 @@ export async function POST(
 
     const { ideaId } = await params;
     const body = await request.json();
-    const { title, description, order } = body;
+    const { title, description, order, assignedToId, dueDate, reviewerIds } =
+      body as {
+        title?: string;
+        description?: string;
+        order?: number;
+        assignedToId?: string;
+        dueDate?: string;
+        reviewerIds?: string[];
+      };
 
     if (!title) {
       return NextResponse.json({ error: "title is required" }, { status: 400 });
@@ -38,6 +46,9 @@ export async function POST(
           description: description || null,
           order: order ?? 0,
           ideaId,
+          assignedToId: assignedToId || null,
+          dueDate: dueDate ? new Date(dueDate) : null,
+          reviewerIds: Array.isArray(reviewerIds) ? reviewerIds : [],
         },
       });
 

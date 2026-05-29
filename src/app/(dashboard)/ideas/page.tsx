@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Archive } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isCTO } from "@/lib/permissions";
@@ -30,24 +31,39 @@ export default async function IdeasPage() {
 
   const user = session.user as { id: string; role: string };
 
-  const ideas = await prisma.idea.findMany({
-    include: {
-      _count: { select: { tasks: true } },
-      creator: { select: { id: true, name: true } },
-      lead: { select: { id: true, name: true } },
-      tasks: {
-        select: {
-          assignee: { select: { id: true, name: true } },
+  const [ideas, archivedCount] = await Promise.all([
+    prisma.idea.findMany({
+      where: { status: { not: "COMPLETED" } },
+      include: {
+        _count: { select: { tasks: true } },
+        creator: { select: { id: true, name: true } },
+        lead: { select: { id: true, name: true } },
+        tasks: {
+          select: {
+            assignee: { select: { id: true, name: true } },
+          },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.idea.count({ where: { status: "COMPLETED" } }),
+  ]);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-foreground">Ideas</h1>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-xl font-semibold text-foreground">Ideas</h1>
+          {archivedCount > 0 && (
+            <Link
+              href="/ideas/archive"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-primary"
+            >
+              <Archive className="h-3 w-3" />
+              {archivedCount} archived
+            </Link>
+          )}
+        </div>
         {isCTO(user.role) && (
           <Link href="/ideas/new">
             <Button>Create Idea</Button>

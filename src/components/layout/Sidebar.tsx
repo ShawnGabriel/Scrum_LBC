@@ -12,6 +12,7 @@ import {
   CheckCircle,
   Plus,
   GitPullRequest,
+  Archive,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
@@ -33,15 +34,24 @@ const ctoLinks = [
   { href: "/ideas", label: "Ideas", icon: Lightbulb },
   { href: "/review", label: "Review Queue", icon: CheckCircle },
   { href: "/ideas/new", label: "New Idea", icon: Plus },
+  { href: "/ideas/archive", label: "Idea Archive", icon: Archive },
 ];
 
 export function Sidebar({ userRole, userName }: SidebarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // Pick the longest matching href so /ideas/archive activates "Idea Archive"
+  // alone, not both "Ideas" and "Idea Archive".
+  const allHrefs = [...mainLinks, ...ctoLinks].map((l) => l.href);
+  const matchedHref = allHrefs
+    .filter(
+      (h) => pathname === h || (h !== "/" && pathname.startsWith(h + "/"))
+    )
+    .sort((a, b) => b.length - a.length)[0];
+
   function isActive(href: string) {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
+    return href === matchedHref;
   }
 
   return (

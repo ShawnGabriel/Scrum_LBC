@@ -63,6 +63,16 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Subpixel + ligature polish */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection */
+::selection {
+  background: rgba(123, 184, 255, 0.25);
+  color: var(--color-foreground);
 }
 
 /* Scrollbar styling */
@@ -82,4 +92,210 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #4A5470;
+}
+
+/* Focus ring — visible only when keyboard navigating, subtle ring */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(5, 11, 26, 1), 0 0 0 3px rgba(123, 184, 255, 0.55);
+  border-radius: 3px;
+}
+
+/* ═══════════════════════════ Motion ═══════════════════════════
+   Inspired by Linear, Vercel, Stripe, Things 3:
+   - Short durations (180–320ms) — anything longer feels sluggish
+   - Ease-out curves so motion settles, never overshoots
+   - Use transform/opacity only — no layout thrash
+   - Stagger via animationDelay for orchestrated reveals
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global tap/active feedback — any element with .interactive gets press scale */
+.interactive {
+  transition: transform 140ms var(--ease-out-quint),
+              background-color 160ms var(--ease-out-quint),
+              border-color 160ms var(--ease-out-quint),
+              color 160ms var(--ease-out-quint),
+              box-shadow 160ms var(--ease-out-quint);
+}
+.interactive:active {
+  transform: scale(0.97);
+}
+
+/* ── Route entry ────────────────────────────────────────────── */
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.route-enter {
+  animation: route-enter 420ms var(--ease-out-expo) both;
+  will-change: opacity, transform, filter;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-in-from-bottom-1 {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-from-bottom-2 {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-from-bottom-3 {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+@keyframes ring-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(123, 184, 255, 0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(123, 184, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(123, 184, 255, 0); }
+}
+
+/* Used by progress bars — animates from 0 to actual % via --progress var. */
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Used by circular progress rings — counts up stroke-dashoffset. */
+@keyframes ring-fill {
+  from { stroke-dashoffset: var(--ring-circumference); }
+  to   { stroke-dashoffset: var(--ring-offset); }
+}
+
+/* Used for count-up numbers fading in. */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utilities ──────────────────────────────────────────────── */
+.animate-in {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out-expo);
+  animation-fill-mode: both;
+}
+
+.fade-in                  { animation-name: fade-in; }
+.slide-in-from-bottom-1   { animation-name: slide-in-from-bottom-1; }
+.slide-in-from-bottom-2   { animation-name: slide-in-from-bottom-2; }
+.slide-in-from-bottom-3   { animation-name: slide-in-from-bottom-3; }
+.scale-in                 { animation-name: scale-in; }
+
+/* Composed: fade + slide together (animation-name wins over fade-in alone) */
+.animate-in.fade-in.slide-in-from-bottom-1 { animation-name: slide-in-from-bottom-1; }
+.animate-in.fade-in.slide-in-from-bottom-2 { animation-name: slide-in-from-bottom-2; }
+.animate-in.fade-in.slide-in-from-bottom-3 { animation-name: slide-in-from-bottom-3; }
+.animate-in.fade-in.scale-in               { animation-name: scale-in; }
+
+.duration-150 { animation-duration: 150ms; }
+.duration-200 { animation-duration: 200ms; }
+.duration-300 { animation-duration: 300ms; }
+.duration-400 { animation-duration: 400ms; }
+.duration-500 { animation-duration: 500ms; }
+.duration-700 { animation-duration: 700ms; }
+.duration-1000 { animation-duration: 1000ms; }
+.fill-mode-both { animation-fill-mode: both; }
+
+.ease-out-expo { animation-timing-function: var(--ease-out-expo); }
+.ease-spring   { animation-timing-function: var(--ease-spring); }
+
+/* Animated progress bar — set width via inline style or --progress */
+.progress-grow {
+  transform-origin: left center;
+  animation: progress-grow 900ms var(--ease-out-expo) both;
+  animation-delay: 200ms;
+}
+
+/* Shimmer skeleton placeholder */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(43, 54, 86, 0.4) 25%,
+    rgba(74, 84, 112, 0.55) 50%,
+    rgba(43, 54, 86, 0.4) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+.pulse-soft  { animation: pulse-soft 2.4s ease-in-out infinite; }
+.ring-pulse  { animation: ring-pulse 2s ease-out infinite; }
+
+/* ── View Transitions API ──────────────────────────────────────
+   Chrome/Edge get a native cross-fade + slide on route change.
+   The route-enter class above layers extra motion on the new page. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 180ms var(--ease-out-quint) both fade-out-slight;
+}
+
+::view-transition-new(root) {
+  animation: 320ms var(--ease-out-expo) both fade-in-slight;
+}
+
+@keyframes fade-out-slight {
+  to { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes fade-in-slight {
+  from { opacity: 0; transform: translateY(4px); }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────
+   Honor user preference — strip animations but keep instant feedback. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .interactive:active { transform: none; }
 }

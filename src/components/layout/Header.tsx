@@ -12,7 +12,7 @@ interface HeaderProps {
 
 export function Header({ userName, userRole, children }: HeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-between border-b border-border bg-surface px-5">
+    <header className="flex h-12 items-center justify-between border-b border-border bg-surface/95 backdrop-blur-sm px-5 supports-[backdrop-filter]:bg-surface/80">
       <div className="flex items-center gap-4">{children}</div>
 
       <div className="flex items-center gap-3">
@@ -28,9 +28,9 @@ export function Header({ userName, userRole, children }: HeaderProps) {
           variant="ghost"
           size="sm"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="h-8 px-2 text-muted-foreground hover:text-foreground"
+          className="group h-8 px-2 text-muted-foreground transition-colors hover:text-foreground"
         >
-          <LogOut className="h-3.5 w-3.5" />
+          <LogOut className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
         </Button>
       </div>
     </header>

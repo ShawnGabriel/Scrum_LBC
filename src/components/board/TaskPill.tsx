@@ -58,7 +58,7 @@ export function TaskPill({ task, isOwner, onStatusChange, onSubmit }: TaskPillPr
 
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-md border bg-surface px-3 py-2"
+      className="group/pill flex flex-col gap-1.5 rounded-md border bg-surface px-3 py-2 transition-all duration-200 ease-out hover:bg-surface-hover hover:border-border-strong"
       style={{ borderLeftWidth: "4px", borderLeftColor: colors.border }}
     >
       <div className="flex items-center justify-between gap-2">

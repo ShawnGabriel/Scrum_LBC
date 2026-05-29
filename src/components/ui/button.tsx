@@ -3,16 +3,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-sm text-xs font-medium uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-sm text-xs font-medium uppercase tracking-wider transition-all duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-primary",
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:shadow-[0_2px_12px_rgba(123,184,255,0.35)] focus-visible:ring-primary",
         secondary:
-          "bg-surface-hover text-foreground border border-border hover:bg-surface-elevated focus-visible:ring-primary",
+          "bg-surface-hover text-foreground border border-border hover:bg-surface-elevated hover:border-border-strong focus-visible:ring-primary",
         outline:
-          "border border-border bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary",
+          "border border-border bg-transparent text-foreground hover:bg-surface-hover hover:border-border-strong focus-visible:ring-primary",
         ghost:
           "bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary",
         destructive:

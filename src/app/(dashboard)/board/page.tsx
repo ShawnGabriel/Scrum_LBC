@@ -1,37 +1,41 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { HomeClient } from "@/components/home/HomeClient";
+import { BoardClient } from "@/components/board/BoardClient";
 
-export default async function HomePage() {
+export default async function DashboardPage() {
   const session = await auth();
-  if (!session?.user) redirect("/login");
 
-  const user = session.user as { id: string; name?: string | null; role: string };
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const user = session.user as { id: string; role: string };
 
   const ideas = await prisma.idea.findMany({
-    where: { tasks: { some: { assignedToId: user.id } } },
+    where: {
+      status: { in: ["ASSIGNED", "IN_PROGRESS", "IN_REVIEW"] },
+    },
     include: {
+      lead: true,
       tasks: {
-        where: { assignedToId: user.id },
         orderBy: { order: "asc" },
         include: {
+          assignee: true,
+          revisionTasks: { orderBy: { order: "asc" } },
           submissions: { orderBy: { createdAt: "desc" } },
-          revisionTasks: { orderBy: { createdAt: "asc" } },
           statusTransitions: { orderBy: { changedAt: "desc" } },
-          parentTask: true,
         },
       },
-      creator: { select: { id: true, name: true } },
     },
     orderBy: { updatedAt: "desc" },
   });
 
   return (
-    <HomeClient
-      userName={user.name ?? "there"}
-      userId={user.id}
+    <BoardClient
       ideas={JSON.parse(JSON.stringify(ideas))}
+      currentUserId={user.id}
+      userRole={user.role}
     />
   );
 }

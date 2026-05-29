@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutGrid,
   Lightbulb,
-  User,
+  Home,
   Activity,
   Calendar,
   CheckCircle,
@@ -22,8 +22,8 @@ interface SidebarProps {
 }
 
 const mainLinks = [
-  { href: "/", label: "Team Board", icon: LayoutGrid },
-  { href: "/my-work", label: "My Work", icon: User },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/board", label: "Team Board", icon: LayoutGrid },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/standup", label: "Standup", icon: Calendar },
   { href: "/contributions", label: "Contributions", icon: GitPullRequest },
@@ -56,11 +56,12 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
         onMouseLeave={() => setOpen(false)}
         onMouseEnter={() => setOpen(true)}
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[240px] flex-col border-r border-border bg-sidebar transition-transform duration-200 ease-out",
+          "fixed inset-y-0 left-0 z-50 flex w-[240px] flex-col border-r border-border bg-sidebar transition-all duration-[280ms]",
           open
             ? "translate-x-0 shadow-[8px_0_32px_rgba(0,0,0,0.45)]"
             : "-translate-x-full"
         )}
+        style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <div className="flex items-center gap-2 px-5 py-4">
           <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground">
@@ -85,13 +86,25 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors",
+                  "group relative flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-200 ease-out active:scale-[0.98]",
                   active
-                    ? "border-l-[2px] border-l-primary bg-sidebar-active-bg text-white"
-                    : "border-l-[2px] border-l-transparent text-sidebar-text hover:bg-sidebar-hover hover:text-white"
+                    ? "bg-sidebar-active-bg text-white"
+                    : "text-sidebar-text hover:bg-sidebar-hover hover:text-white hover:translate-x-0.5"
                 )}
               >
-                <Icon className="h-[16px] w-[16px]" />
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute left-0 top-1/2 -translate-y-1/2 w-[2px] rounded-r-sm bg-primary transition-all duration-300 ease-out",
+                    active ? "h-5 opacity-100" : "h-0 opacity-0"
+                  )}
+                />
+                <Icon
+                  className={cn(
+                    "h-[16px] w-[16px] transition-transform duration-200 ease-out",
+                    "group-hover:scale-110"
+                  )}
+                />
                 {link.label}
               </Link>
             );
@@ -111,13 +124,25 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors",
+                      "group relative flex items-center gap-3 rounded-sm px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-200 ease-out active:scale-[0.98]",
                       active
-                        ? "border-l-[2px] border-l-primary bg-sidebar-hover text-foreground"
-                        : "border-l-[2px] border-l-transparent text-sidebar-text hover:bg-sidebar-hover hover:text-foreground"
+                        ? "bg-sidebar-hover text-foreground"
+                        : "text-sidebar-text hover:bg-sidebar-hover hover:text-foreground hover:translate-x-0.5"
                     )}
                   >
-                    <Icon className="h-[16px] w-[16px]" />
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "absolute left-0 top-1/2 -translate-y-1/2 w-[2px] rounded-r-sm bg-primary transition-all duration-300 ease-out",
+                        active ? "h-5 opacity-100" : "h-0 opacity-0"
+                      )}
+                    />
+                    <Icon
+                      className={cn(
+                        "h-[16px] w-[16px] transition-transform duration-200 ease-out",
+                        "group-hover:scale-110"
+                      )}
+                    />
                     {link.label}
                   </Link>
                 );

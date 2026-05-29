@@ -23,7 +23,7 @@ function DialogOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
+        "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200",
         className
       )}
       onClick={onClick}
@@ -47,7 +47,7 @@ function DialogContent({
       <DialogOverlay onClick={onClose} />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg",
+          "relative z-50 w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.7)] animate-in fade-in scale-in duration-300 ease-out-expo",
           className
         )}
         {...props}
@@ -55,7 +55,7 @@ function DialogContent({
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+            className="absolute right-4 top-4 rounded-sm text-muted-foreground transition-all duration-150 ease-out hover:text-foreground hover:rotate-90 active:scale-90"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>

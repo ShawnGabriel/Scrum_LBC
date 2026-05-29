@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Eye } from "lucide-react";
+import { Plus, Trash2, Eye, FileText, UploadCloud, X, Loader2 } from "lucide-react";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+
+const MAX_PRD_BYTES = 15 * 1024 * 1024;
 
 interface Person {
   id: string;
@@ -28,13 +31,17 @@ export default function NewIdeaPage() {
   const { toast } = useToast();
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [leadId, setLeadId] = useState("");
   const [ideaDueDate, setIdeaDueDate] = useState("");
   const [associates, setAssociates] = useState<Person[]>([]);
   const [ctos, setCtos] = useState<Person[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingAssociates, setLoadingAssociates] = useState(true);
+
+  // PRD upload state
+  const [prdFile, setPrdFile] = useState<File | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [tasks, setTasks] = useState<TaskRow[]>([
     { title: "", description: "", assignedToId: "", dueDate: "", reviewerIds: [] },
@@ -124,23 +131,52 @@ export default function NewIdeaPage() {
     );
   }
 
+  function validateAndSetFile(file: File): boolean {
+    if (file.type !== "application/pdf") {
+      toast("Only PDF files are accepted.", "error");
+      return false;
+    }
+    if (file.size > MAX_PRD_BYTES) {
+      toast("PDF is too large (max 15 MB).", "error");
+      return false;
+    }
+    setPrdFile(file);
+    return true;
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) validateAndSetFile(file);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const validTasks = tasks.filter((t) => t.title.trim());
-    if (!title.trim() || !description.trim() || validTasks.length === 0) {
-      toast("Please fill in the title, description, and at least one task.", "error");
+    if (!title.trim() || !prdFile || validTasks.length === 0) {
+      toast("Please add a title, PRD PDF, and at least one task.", "error");
       return;
     }
 
     setLoading(true);
     try {
+      // 1) Upload PDF directly to Vercel Blob via signed client upload
+      const blob = await upload(prdFile.name, prdFile, {
+        access: "public",
+        handleUploadUrl: "/api/uploads/prd",
+        contentType: "application/pdf",
+      });
+
+      // 2) Create the idea referencing the blob URL
       const res = await fetch("/api/ideas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
-          description: description.trim(),
+          prdUrl: blob.url,
+          prdFilename: prdFile.name,
           leadId: leadId || undefined,
           dueDate: ideaDueDate || undefined,
           tasks: validTasks.map((t, i) => ({
@@ -192,17 +228,80 @@ export default function NewIdeaPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="description" className="text-sm font-medium text-foreground">
-              Description <span className="text-status-orange">*</span>
+            <label className="text-sm font-medium text-foreground">
+              Product Requirements (PDF) <span className="text-status-orange">*</span>
             </label>
-            <Textarea
-              id="description"
-              placeholder="Describe the idea..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              required
+            <p className="text-[11px] text-muted-foreground">
+              Drop in the PRD — it becomes the source of truth for this idea. Max 15 MB.
+            </p>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) validateAndSetFile(f);
+                e.target.value = "";
+              }}
             />
+
+            {!prdFile ? (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragOver(true);
+                }}
+                onDragLeave={() => setIsDragOver(false)}
+                onDrop={handleDrop}
+                className={cn(
+                  "group relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-all duration-200 ease-out active:scale-[0.99]",
+                  isDragOver
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-surface-elevated/30 hover:border-primary/50 hover:bg-surface-hover"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200",
+                    isDragOver
+                      ? "bg-primary/20 text-primary scale-110"
+                      : "bg-surface-elevated text-muted-foreground group-hover:text-primary"
+                  )}
+                >
+                  <UploadCloud className="h-6 w-6" />
+                </div>
+                <p className="text-sm font-medium text-foreground">
+                  {isDragOver ? "Drop the PDF here" : "Click to upload or drag in"}
+                </p>
+                <p className="text-[11px] text-label">PDF · up to 15 MB</p>
+              </button>
+            ) : (
+              <div className="flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <FileText className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {prdFile.name}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {(prdFile.size / 1024 / 1024).toFixed(2)} MB · ready to upload
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPrdFile(null)}
+                  className="shrink-0 rounded-lg p-2 text-muted-foreground transition-all duration-150 ease-out hover:bg-surface-hover hover:text-foreground active:scale-90"
+                  aria-label="Remove PDF"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -381,7 +480,14 @@ export default function NewIdeaPage() {
             Cancel
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create Idea"}
+            {loading ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Uploading & creating…
+              </>
+            ) : (
+              "Create Idea"
+            )}
           </Button>
         </div>
       </form>

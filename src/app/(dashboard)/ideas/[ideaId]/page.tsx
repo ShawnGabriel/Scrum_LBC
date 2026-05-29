@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { FileText, Download, ExternalLink } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isCTO } from "@/lib/permissions";
@@ -72,8 +73,12 @@ export default async function IdeaDetailPage({
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-foreground">{idea.title}</h1>
-          <p className="text-sm text-muted-foreground">{idea.description}</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            {idea.title}
+          </h1>
+          {idea.description && !idea.prdUrl && (
+            <p className="text-sm text-muted-foreground">{idea.description}</p>
+          )}
         </div>
         <Badge variant={statusBadgeVariant(idea.status)}>
           {idea.status.replace("_", " ")}
@@ -94,6 +99,50 @@ export default async function IdeaDetailPage({
           {formatRelativeTime(new Date(idea.createdAt))}
         </div>
       </div>
+
+      {idea.prdUrl && (
+        <section className="space-y-2 animate-in fade-in slide-in-from-bottom-1 duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">
+                Product Requirements
+              </h2>
+              {idea.prdFilename && (
+                <span className="text-xs text-muted-foreground">
+                  · {idea.prdFilename}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={idea.prdUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-transparent px-3 py-1.5 text-xs font-medium text-foreground transition-all duration-150 ease-out hover:bg-surface-hover hover:border-border-strong active:scale-95"
+              >
+                <ExternalLink className="h-3 w-3" />
+                Open
+              </a>
+              <a
+                href={idea.prdUrl}
+                download={idea.prdFilename ?? "PRD.pdf"}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-transparent px-3 py-1.5 text-xs font-medium text-foreground transition-all duration-150 ease-out hover:bg-surface-hover hover:border-border-strong active:scale-95"
+              >
+                <Download className="h-3 w-3" />
+                Download
+              </a>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-border bg-surface/60 backdrop-blur-sm">
+            <iframe
+              src={`${idea.prdUrl}#toolbar=1&view=FitH`}
+              title={`PRD for ${idea.title}`}
+              className="block h-[640px] w-full"
+            />
+          </div>
+        </section>
+      )}
 
       <IdeaDetailClient
         tasks={JSON.parse(JSON.stringify(idea.tasks))}

@@ -46,19 +46,22 @@ model User {
 }
 
 model Idea {
-  id           String        @id @default(cuid())
-  title        String
-  description  String
-  status       IdeaStatus    @default(DRAFT)
-  creator      User          @relation("CreatedIdeas", fields: [createdById], references: [id])
-  createdById  String
-  lead         User?         @relation("IdeaLead", fields: [leadId], references: [id])
-  leadId       String?
-  dueDate      DateTime?
-  tasks        Task[]
-  activityLogs ActivityLog[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  title          String
+  description    String?       // Legacy plain-text description; PRD PDF is preferred for new ideas
+  prdUrl         String?       // Public Vercel Blob URL of the PRD PDF
+  prdFilename    String?       // Original filename the uploader chose, for display + downloads
+  prdUploadedAt  DateTime?
+  status         IdeaStatus    @default(DRAFT)
+  creator        User          @relation("CreatedIdeas", fields: [createdById], references: [id])
+  createdById    String
+  lead           User?         @relation("IdeaLead", fields: [leadId], references: [id])
+  leadId         String?
+  dueDate        DateTime?
+  tasks          Task[]
+  activityLogs   ActivityLog[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model Task {

@@ -60,17 +60,27 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, leadId, dueDate, tasks } = body as {
-      title?: string;
-      description?: string;
-      leadId?: string;
-      dueDate?: string;
-      tasks?: TaskInput[];
-    };
+    const { title, description, prdUrl, prdFilename, leadId, dueDate, tasks } =
+      body as {
+        title?: string;
+        description?: string;
+        prdUrl?: string;
+        prdFilename?: string;
+        leadId?: string;
+        dueDate?: string;
+        tasks?: TaskInput[];
+      };
 
-    if (!title || !description || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
+    if (!title || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
       return NextResponse.json(
-        { error: "title, description, and at least one task are required" },
+        { error: "title and at least one task are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!prdUrl && !description) {
+      return NextResponse.json(
+        { error: "Either a PRD PDF or a description is required" },
         { status: 400 }
       );
     }
@@ -81,7 +91,10 @@ export async function POST(request: NextRequest) {
       const newIdea = await tx.idea.create({
         data: {
           title,
-          description,
+          description: description || null,
+          prdUrl: prdUrl || null,
+          prdFilename: prdFilename || null,
+          prdUploadedAt: prdUrl ? new Date() : null,
           createdById: session.user!.id,
           leadId: leadId || null,
           dueDate: dueDate ? new Date(dueDate) : null,

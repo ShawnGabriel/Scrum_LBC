@@ -28,6 +28,7 @@ import {
   Check,
   RotateCcw,
   Inbox,
+  FileText,
 } from "lucide-react";
 
 type TaskWithRelations = Task & {
@@ -349,9 +350,18 @@ export function HomeClient({
                       <div className="mb-1 flex items-center justify-between gap-2 px-1">
                         <Link
                           href={`/ideas/${idea.id}`}
-                          className="truncate text-[10px] uppercase tracking-wider text-label transition-colors duration-150 hover:text-primary"
+                          className="group/idea inline-flex min-w-0 items-center gap-1.5 text-[10px] uppercase tracking-wider text-label transition-colors duration-150 hover:text-primary"
                         >
-                          {idea.title}
+                          <span className="truncate">{idea.title}</span>
+                          {idea.prdUrl && (
+                            <span
+                              title="View PRD"
+                              className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-primary/30 bg-primary/10 px-1.5 py-px text-[9px] font-medium text-primary"
+                            >
+                              <FileText className="h-2.5 w-2.5" />
+                              PRD
+                            </span>
+                          )}
                         </Link>
                       </div>
                       <TaskPill

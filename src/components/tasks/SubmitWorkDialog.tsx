@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FileText, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +16,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { parsePrUrl } from "@/lib/pr-url";
+
+interface TaskDetailLite {
+  idea?: {
+    id: string;
+    title: string;
+    prdUrl: string | null;
+    prdFilename: string | null;
+  };
+}
 
 interface SubmitWorkDialogProps {
   taskId: string;
@@ -32,6 +43,21 @@ export function SubmitWorkDialog({
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  // Reuses the cache key the detail panel uses, so this is free when opened
+  // from the board; cheap otherwise (~1 query) and gated on dialog open.
+  const { data: task } = useQuery<TaskDetailLite>({
+    queryKey: ["task-detail", taskId],
+    queryFn: async () => {
+      const res = await fetch(`/api/tasks/${taskId}/detail`);
+      if (!res.ok) throw new Error("Failed to fetch task");
+      return res.json();
+    },
+    enabled: open,
+    staleTime: 30_000,
+  });
+  const prdUrl = task?.idea?.prdUrl ?? null;
+  const prdFilename = task?.idea?.prdFilename ?? null;
 
   const parsed = useMemo(() => (prUrl.trim() ? parsePrUrl(prUrl) : null), [prUrl]);
   const showInvalid = prUrl.trim().length > 0 && parsed === null;
@@ -85,6 +111,28 @@ export function SubmitWorkDialog({
             drive this task&apos;s status automatically — merging completes it.
           </DialogDescription>
         </DialogHeader>
+
+        {prdUrl && (
+          <a
+            href={prdUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2.5 text-sm transition-all duration-150 ease-out hover:border-primary/50 hover:bg-primary/15 active:scale-[0.99]"
+          >
+            <FileText className="h-4 w-4 shrink-0 text-primary" />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-foreground">
+                Need a refresher? Open the PRD.
+              </p>
+              {prdFilename && (
+                <p className="truncate text-[11px] text-muted-foreground">
+                  {prdFilename}
+                </p>
+              )}
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          </a>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-1.5">

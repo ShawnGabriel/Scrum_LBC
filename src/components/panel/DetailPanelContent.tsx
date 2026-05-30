@@ -1,9 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { GitCommit, Clock, AlertCircle, CheckCircle2, Play } from "lucide-react";
+import {
+  GitCommit,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  Play,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusPill } from "@/components/board/StatusPill";
@@ -30,6 +39,8 @@ interface DetailPanelContentProps {
     idea: {
       id: string;
       title: string;
+      prdUrl: string | null;
+      prdFilename: string | null;
       lead: { id: string; name: string } | null;
       creator: { id: string; name: string };
     };
@@ -160,9 +171,12 @@ export function DetailPanelContent({
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="w-20 text-[10px] uppercase tracking-wider text-label">Idea</span>
-            <span className="text-[11px] uppercase tracking-wider text-foreground">
+            <Link
+              href={`/ideas/${task.idea.id}`}
+              className="text-[11px] uppercase tracking-wider text-foreground transition-colors hover:text-primary"
+            >
               {task.idea.title}
-            </span>
+            </Link>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-20 text-[10px] uppercase tracking-wider text-label">Assignee</span>
@@ -214,6 +228,42 @@ export function DetailPanelContent({
           </div>
         </div>
       </div>
+
+      {/* PRD — surface the requirements doc prominently */}
+      {task.idea.prdUrl && (
+        <div className="border-b border-border px-5 py-4 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <FileText className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-label">
+                Product Requirements
+              </p>
+              {task.idea.prdFilename && (
+                <span className="truncate text-[11px] text-muted-foreground">
+                  · {task.idea.prdFilename}
+                </span>
+              )}
+            </div>
+            <a
+              href={task.idea.prdUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-border bg-transparent px-2.5 py-1 text-[11px] font-medium text-foreground transition-all duration-150 ease-out hover:bg-surface-hover hover:border-primary/40 hover:text-primary active:scale-95"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Open
+            </a>
+          </div>
+          {/* Inline thumbnail viewer — narrow but readable */}
+          <div className="overflow-hidden rounded-lg border border-border bg-surface-elevated/40">
+            <iframe
+              src={`${task.idea.prdUrl}#toolbar=0&view=FitH`}
+              title={`PRD for ${task.idea.title}`}
+              className="block h-[280px] w-full"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="border-b border-border px-5 py-3">
